@@ -1,0 +1,64 @@
+<?php require_once "pdo.php";
+
+if (isset($_POST["bewerk"])) {
+  try {
+    $sql = $pdo->prepare("UPDATE `user` SET `email`=:1, `name`=:2 WHERE `ID`=:3;");
+    $sql->bindParam(":1", $_POST['email']);
+    $sql->bindParam(":2", $_POST['name']);
+    $sql->bindParam(":3", $_SESSION['userID']);
+    $sql->execute();
+    $_SESSION["user"] = $_POST["name"];
+    $_SESSION["userEmail"] = $_POST["email"];
+  } catch (Exception $e) {
+    echo $e;
+  }
+}
+
+if (isset($_POST["login"])) {
+  if (!isset($_SESSION["user"])) {
+    $result = getUser($_POST["email"]);
+    if($result) {
+      if(password_verify($_POST['password'], $result['password'])) {
+        $GLOBALS["user"] = $result["name"];
+        $GLOBALS["userEmail"] = $_POST["email"];
+      } else {
+        $info = 'Wachtwoord is niet correct.';
+      }
+    } else {
+      $info = 'Email niet gevonden.';
+    }
+  }
+}
+
+if (isset($_POST["registreer"])) {
+  if ($_POST["password"] == $_POST["password2"]) {
+    try {
+      $sql = "SELECT `email` FROM `user` WHERE `email` = ?";
+      $stmt = $pdo->prepare($sql);
+      $stmt->execute([$_POST['email']]);
+      $result = $stmt->fetch();
+      if($result) throw new Exception("Error Email Exists");
+      $sql = "SELECT `name` FROM `user` WHERE `name` = ?";
+      $stmt = $pdo->prepare($sql);
+      $stmt->execute([$_POST['name']]);
+      $result = $stmt->fetch();
+      if($result) throw new Exception("Error Name Exists");
+      $sql = $pdo->prepare("INSERT INTO `user` VALUES (null, ?, ?, ?);");
+      $hash = password_hash($_POST["password"], 1);
+      $GLOBALS["user"] = $_POST["name"];
+      $GLOBALS["userEmail"] = $_POST["email"];
+      $sql->execute([$_POST["email"], $_POST["name"], $hash]);
+    } catch(Exception $e) {
+      echo $e->getMessage()." In Database";
+    }
+  } else {
+    $info = 'Wachtwoorden kwamen niet overeen.';
+  }
+}
+
+if (isset($GLOBALS["user"]) && !isset($_SESSION["user"])) {
+  $_SESSION["user"] = $GLOBALS["user"];
+  $_SESSION["userEmail"] = $GLOBALS["userEmail"];
+  $result = getUser($GLOBALS["userEmail"]);
+  $_SESSION["userID"] = $result['ID'];
+}
