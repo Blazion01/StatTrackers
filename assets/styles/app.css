@@ -1,0 +1,44 @@
+nav ul, nav li {
+  display: inline-block;
+}
+
+#teams, #teams div, #teams div div {
+  width: fit-content;
+  margin: 0 auto;
+}
+
+#teams>div {
+  min-width: 100px;
+  border: 5px solid black;
+  border-radius: 10px;
+  overflow: hidden;
+  margin-bottom: 10px;
+}
+
+#teams div h4 {
+  width: 100%;
+  height: 100%;
+  line-height: 20px;
+  margin: 0 auto;
+}
+
+#teams div div {
+  display: none;
+}
+
+#teams table {
+  border-spacing: 0;
+}
+
+#teams table td {
+  border-top: 2px solid black;
+}
+
+#teams table th {
+  border-top: 5px solid black;
+}
+
+#teams table tr *:nth-child(2) {
+  border-left: 2px groove black;
+  border-right: 2px groove black;
+}
