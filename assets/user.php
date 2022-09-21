@@ -1,10 +1,14 @@
 <?php require_once "pdo.php";
 
+function getRoles(string $user) {
+  return json_decode(getUser($user)["roles"]);
+}
+
 function addRole(string $user, string $role) {
   $pdo = $GLOBALS["pdo"];
   $messages = $GLOBALS["messages"];
   try {
-    $roles = json_decode(getUser($user)["roles"]);
+    $roles = getRoles($user);
     array_push($roles,$role);
     $roles = json_encode($roles);
     $sql = "UPDATE `user` SET `roles` = ? WHERE `email` = ?";
@@ -15,6 +19,29 @@ function addRole(string $user, string $role) {
     return;
   }
   $messages[count($messages)] = "Rol $role is toegevoegd bij $user";
+  return;
+}
+
+function removeRole(string $user, string $role) {
+  $pdo = $GLOBALS["pdo"];
+  $messages = $GLOBALS["messages"];
+  try {
+    $roles = getRoles($user);
+    foreach ($roles as $key => $value) {
+      if ($value == $role) {
+        array_slice($roles,$key,1);
+        break;
+      }
+    }
+    $roles = json_encode($roles);
+    $sql = "UPDATE `user` SET `roles` = ? WHERE `email` = ?";
+    $stmt = $pdo->prepare($sql);
+    $stmt->execute($roles, $user);
+  } catch (Exception $e) {
+    $messages[count($messages)] = $e;
+    return;
+  }
+  $messages[count($messages)] = "Rol $role is verwijderd bij $user";
   return;
 }
 
