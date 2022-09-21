@@ -1,5 +1,5 @@
 <?php include_once "./header.php";
-  require_once "../assets/user.php"; print_r(json_decode(getUser($_SESSION['userEmail'])['game_contribution'],true)); ?>
+  require_once "../assets/user.php"; ?>
 
 <button onclick="bewerkProfiel()">Bewerk</button>
 <form action="" method="post">
