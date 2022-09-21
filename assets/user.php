@@ -2,7 +2,7 @@
 
 if (isset($_POST["bewerk"])) {
   try {
-    $sql = $pdo->prepare("UPDATE `user` SET `email`=:1, `name`=:2 WHERE `ID`=:3;");
+    $sql = $pdo->prepare("UPDATE `user` SET `email`=:1, `name`=:2 WHERE `user_id`=:3;");
     $sql->bindParam(":1", $_POST['email']);
     $sql->bindParam(":2", $_POST['name']);
     $sql->bindParam(":3", $_SESSION['userID']);
