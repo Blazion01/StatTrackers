@@ -1,5 +1,13 @@
 <?php require_once "pdo.php";
 
+function createTeam($name) {
+  $pdo = $GLOBALS["pdo"];
+  $sql = "INSERT IGNORE INTO `team` (`name`)
+          VALUES (?);";
+  $stmt = $pdo->prepare($sql);
+  $stmt->execute([$name]);
+}
+
 function addMember($team, $user) {
   $pdo = $GLOBALS["pdo"];
   $sql = "INSERT INTO `mtm_user_team` (`user_id`, `team_id`)
