@@ -17,13 +17,13 @@ function createTeam(string $name) {
 
 function getMembers(int $team) {
   $pdo = $GLOBALS["pdo"];
-  $sql = "SELECT `user`.`name` FROM `user` WHERE `user`.`user_id` = (SELECT `mtm_user_team`.`user_id` FROM `mtm_user_team` WHERE `mtm_user_team`.`team_id` = $team AND `mtm_user_team`.`active` = true);";
+  $sql = "SELECT `user`.`name`,`user`.`user_id` FROM `user` WHERE `user`.`user_id` IN (SELECT `mtm_user_team`.`user_id` FROM `mtm_user_team` WHERE `mtm_user_team`.`team_id` = $team AND `mtm_user_team`.`active` = true);";
   return $pdo->query($sql)->fetchAll(PDO::FETCH_ASSOC);
 }
 
 function getPotentialMembers() {
   $pdo = $GLOBALS["pdo"];
-  $sql = "SELECT `user_id`,`name` FROM `user` WHERE NOT EXISTS (SELECT DISTINCT `user_id` FROM `mtm_user_team` WHERE `active` = true);";
+  $sql = "SELECT `user`.`user_id`,`user`.`name` FROM `user` WHERE `user`.`user_id` NOT IN (SELECT DISTINCT `mtm_user_team`.`user_id` FROM `mtm_user_team` WHERE `mtm_user_team`.`active` = true);";
   return $pdo->query($sql)->fetchAll(PDO::FETCH_ASSOC);
 }
 
@@ -81,4 +81,13 @@ if (isset($_POST["createTeam"])) {
 if (isset($_POST["addMember"])) {
   addMember($_POST["team_id"],$_POST["member"]);
   ?> <script>location.href='../pages/admin.php'</script> <?php
+}
+
+if (isset($_POST["removeMembers"])) {
+  if (isset($_POST["player"])) {
+    foreach ($_POST["player"] as $key => $user_id) {
+      removeMember($_POST["team"],$user_id);
+    }
+  }
+  ?> <script>location.href='../pages/admin.php'</script> <?php 
 }

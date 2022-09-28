@@ -10,20 +10,25 @@
       <div id="<?php echo $team['name'] ?>">
         <table class="teamMembers">
           <tr>
-            <td colspan="2"><b>Members</b></td>
+            <td colspan="3"><b>Members</b></td>
           </tr>
+          <form action="../assets/team.php" method="post">
+            <input type="hidden" name="team" value="<?php echo $team["team_id"] ?>">
           <?php
             $members = getMembers($team['team_id']);
             foreach ($members as $key => $member) {
           ?>
           <tr>
+            <td><input min="1" type="checkbox" name="player[<?php echo $key ?>]" id="player<?php echo $member['user_id'] ?>" value="<?php echo $member['user_id'] ?>"></td>
             <td colspan="2"><?php echo $member['name'] ?></td>
           </tr>
-          <?php }
-          $members = getPotentialMembers();
+          <?php } $members = getPotentialMembers(); ?>
+          <tr>
+            <td <?php if(!$members) echo "colspan=\"3\""; ?>><input type="submit" name="removeMembers" value="Delete"></td>
+            </form>
+          <?php
           if ($members) {
           ?>
-          <tr>
             <form action="../assets/team.php" method="post">
               <input type="hidden" name="team_id" value="<?php echo $team['team_id']; ?>">
               <td><select name="member">
@@ -32,8 +37,8 @@
               <?php } ?></select></td>
               <td><button name="addMember" type="submit">Voeg Toe</button></td>
             </form>
-          </tr>
           <?php } ?>
+          </tr>
         </table>
       </div>
 

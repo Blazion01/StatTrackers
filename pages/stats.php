@@ -3,7 +3,7 @@ require_once "../assets/userContibutions.php"; ?>
 <?php $contrib = getContribution(); //print_r($contrib); ?>
 
 
-<div id="teams" style="text-align:center;">
+<div id="teams" class="user" style="text-align:center;">
 <?php if ($contrib) foreach ($contrib as $team => $games) { $goals = 0; $assists = 0; ?>
   <div id="<?php echo $team ?>">
     <h4 onclick="show('#<?php echo $team ?>Contrib')"><?php echo $team ?></h4>

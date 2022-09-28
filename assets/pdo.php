@@ -1,4 +1,5 @@
 <?php
+  $GLOBALS["messages"] = [];
   $servername = "127.0.0.1:3306";
   $dbname = "StatTrackers";
   $svname = "mariadb-10.4.24";

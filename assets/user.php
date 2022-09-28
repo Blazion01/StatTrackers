@@ -37,11 +37,26 @@ function removeRole(string $user, string $role) {
     $sql = "UPDATE `user` SET `roles` = ? WHERE `email` = ?";
     $stmt = $pdo->prepare($sql);
     $stmt->execute($roles, $user);
+    $messages[count($messages)] = "Rol $role is verwijderd bij $user";
   } catch (Exception $e) {
     $messages[count($messages)] = $e;
-    return;
   }
-  $messages[count($messages)] = "Rol $role is verwijderd bij $user";
+  return $messages;
+}
+
+function createUser(string $mail, string $name, string $pass) {
+  $pdo = $GLOBALS["pdo"];
+  $messages = $GLOBALS["messages"];
+  $pass = password_hash($pass,1);
+  $sql = $pdo->prepare("INSERT INTO `user` (`email`,`name`,`password`) VALUES (?,?,?)");
+  try {
+    $GLOBALS["user"] = $name;
+    $GLOBALS["userEmail"] = $mail;
+    $sql->execute([$mail,$name,$pass]);
+    $messages[count($messages)] = `User $name created succesfully`;
+  } catch (Exception $e) {
+    $messages[count($messages)] = $e;
+  }
   return;
 }
 
@@ -60,6 +75,7 @@ if (isset($_POST["bewerk"])) {
 }
 
 if (isset($_POST["login"])) {
+  $messages = $GLOBALS["messages"];
   if (!isset($_SESSION["user"])) {
     $result = getUser($_POST["email"]);
     if($result) {
@@ -68,43 +84,33 @@ if (isset($_POST["login"])) {
         $GLOBALS["userEmail"] = $_POST["email"];
       } else {
         $info = 'Wachtwoord is niet correct.';
+        $messages[count($messages)] = $info;
       }
     } else {
       $info = 'Email niet gevonden.';
+      $messages[count($messages)] = $info;
     }
   }
 }
 
 if (isset($_POST["registreer"])) {
+  $messages = $GLOBALS["messages"];
   if ($_POST["password"] == $_POST["password2"]) {
-    try {
-      $sql = "SELECT `email` FROM `user` WHERE `email` = ?";
-      $stmt = $pdo->prepare($sql);
-      $stmt->execute([$_POST['email']]);
-      $result = $stmt->fetch();
-      if($result) throw new Exception("Error Email Exists");
-      $sql = "SELECT `name` FROM `user` WHERE `name` = ?";
-      $stmt = $pdo->prepare($sql);
-      $stmt->execute([$_POST['name']]);
-      $result = $stmt->fetch();
-      if($result) throw new Exception("Error Name Exists");
-      $sql = $pdo->prepare("INSERT INTO `user` VALUES (null, ?, ?, ?);");
-      $hash = password_hash($_POST["password"], 1);
-      $GLOBALS["user"] = $_POST["name"];
-      $GLOBALS["userEmail"] = $_POST["email"];
-      $sql->execute([$_POST["email"], $_POST["name"], $hash]);
-    } catch(Exception $e) {
-      echo $e->getMessage()." In Database";
-    }
+    createUser($_POST["email"],$_POST["name"],$_POST["password"]);
   } else {
     $info = 'Wachtwoorden kwamen niet overeen.';
+    $messages[count($messages)] = $info;
   }
 }
 
 if (isset($GLOBALS["user"]) && !isset($_SESSION["user"])) {
+  $messages = $GLOBALS["messages"];
   $_SESSION["user"] = $GLOBALS["user"];
   $_SESSION["userEmail"] = $GLOBALS["userEmail"];
   $result = getUser($GLOBALS["userEmail"]);
   $_SESSION["userID"] = $result['user_id'];
-  $_SESSION["userRoles"] = getUserJson($GLOBALS["userEmail"])['roles'];
+  $roles = json_decode($result['json'],true)['roles'];
+  if($roles) $_SESSION["userRoles"] = $roles;
+  ?> <script>location.href="../pages/home.php"</script> <?php
+  $messages[count($messages)] = `Logged in as: $GLOBALS[user]`;
 }

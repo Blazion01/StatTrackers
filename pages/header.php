@@ -10,6 +10,6 @@
 </head>
 <body>
 <script src="../assets/app.js"></script>
-<?php session_start();
+<?php session_start(); include_once "../assets/pdo.php";
   include_once "./nav.php";
 ?>

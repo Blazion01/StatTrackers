@@ -39,7 +39,7 @@ nav ul, nav li {
   border-top: 5px solid black;
 }
 
-#teams table tr *:nth-child(2) {
+#teams.user table tr *:nth-child(2) {
   border-left: 2px groove black;
   border-right: 2px groove black;
 }
