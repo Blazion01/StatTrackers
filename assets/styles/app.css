@@ -13,6 +13,7 @@ nav ul, nav li {
   border-radius: 10px;
   overflow: hidden;
   margin-bottom: 10px;
+  text-align: center;
 }
 
 #teams div h4 {

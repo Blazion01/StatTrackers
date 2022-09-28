@@ -1,17 +1,17 @@
 <?php require_once "pdo.php";
 
-function getRoles(string $user) {
-  return json_decode(getUser($user)["roles"]);
+function getUserJson(string $user) {
+  return json_decode(getUser($user)["json"],true);
 }
 
 function addRole(string $user, string $role) {
   $pdo = $GLOBALS["pdo"];
   $messages = $GLOBALS["messages"];
   try {
-    $roles = getRoles($user);
+    $roles = getUserJson($user)['roles'];
     array_push($roles,$role);
     $roles = json_encode($roles);
-    $sql = "UPDATE `user` SET `roles` = ? WHERE `email` = ?";
+    $sql = "UPDATE `user` SET `json` = ? WHERE `email` = ?";
     $stmt = $pdo->prepare($sql);
     $stmt->execute($roles, $user);
   } catch (Exception $e) {
@@ -26,7 +26,7 @@ function removeRole(string $user, string $role) {
   $pdo = $GLOBALS["pdo"];
   $messages = $GLOBALS["messages"];
   try {
-    $roles = getRoles($user);
+    $roles = getUserJson($user)["roles"];
     foreach ($roles as $key => $value) {
       if ($value == $role) {
         array_slice($roles,$key,1);
@@ -105,5 +105,6 @@ if (isset($GLOBALS["user"]) && !isset($_SESSION["user"])) {
   $_SESSION["user"] = $GLOBALS["user"];
   $_SESSION["userEmail"] = $GLOBALS["userEmail"];
   $result = getUser($GLOBALS["userEmail"]);
-  $_SESSION["userID"] = $result['ID'];
+  $_SESSION["userID"] = $result['user_id'];
+  $_SESSION["userRoles"] = getUserJson($GLOBALS["userEmail"])['roles'];
 }

@@ -15,8 +15,8 @@
   
 function getUser($email) {
   $pdo = $GLOBALS["pdo"];
-  $sql = "SELECT `user_id`,`email`,`roles`,`name`,`password`,`game_contribution` FROM `user` WHERE `email` = ?";
+  $sql = "SELECT `user_id`,`email`,`json`,`name`,`password`,`game_contribution` FROM `user` WHERE `email` = ?";
   $stmt = $pdo->prepare($sql);
   $stmt->execute([$email]);
-  return $stmt->fetch();
+  return $stmt->fetch(PDO::FETCH_ASSOC);
 };

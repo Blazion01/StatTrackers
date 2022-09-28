@@ -1,11 +1,30 @@
 <?php require_once "pdo.php";
 
+function getTeams() {
+  $pdo = $GLOBALS["pdo"];
+  $sql = "SELECT * FROM `team`";
+  return $pdo->query($sql)->fetchAll(PDO::FETCH_ASSOC);
+}
+
 function createTeam(string $name) {
   $pdo = $GLOBALS["pdo"];
+  $name = str_replace(" ","_",$name);
   $sql = "INSERT IGNORE INTO `team` (`name`)
-          VALUES (?);";
+          VALUES (?)";
   $stmt = $pdo->prepare($sql);
   $stmt->execute([$name]);
+}
+
+function getMembers(int $team) {
+  $pdo = $GLOBALS["pdo"];
+  $sql = "SELECT `user`.`name` FROM `user` WHERE `user`.`user_id` = (SELECT `mtm_user_team`.`user_id` FROM `mtm_user_team` WHERE `mtm_user_team`.`team_id` = $team AND `mtm_user_team`.`active` = true);";
+  return $pdo->query($sql)->fetchAll(PDO::FETCH_ASSOC);
+}
+
+function getPotentialMembers() {
+  $pdo = $GLOBALS["pdo"];
+  $sql = "SELECT `user_id`,`name` FROM `user` WHERE NOT EXISTS (SELECT DISTINCT `user_id` FROM `mtm_user_team` WHERE `active` = true);";
+  return $pdo->query($sql)->fetchAll(PDO::FETCH_ASSOC);
 }
 
 function addMember(int $team, int $user) {
@@ -19,7 +38,7 @@ function addMember(int $team, int $user) {
 
 function removeMember(int $team, int $user) {
   $pdo = $GLOBALS["pdo"];
-  $sql = "UPDATE `mtm_user_team` (`user_id`, `team_id`)
+  $sql = "UPDATE `mtm_user_team`
           SET `active` = false
           WHERE `user_id` = ? AND `team_id` = ?;";
   $stmt = $pdo->prepare($sql);
@@ -52,4 +71,14 @@ function setGameResults(int $game, int $team, array $playerContributions) {
   }
   $messages[count($messages)] = "Resultaten zijn erin gezet";
   return;
+}
+
+if (isset($_POST["createTeam"])) {
+  createTeam($_POST["name"]);
+  ?> <script>location.href='../pages/admin.php'</script> <?php
+}
+
+if (isset($_POST["addMember"])) {
+  addMember($_POST["team_id"],$_POST["member"]);
+  ?> <script>location.href='../pages/admin.php'</script> <?php
 }
