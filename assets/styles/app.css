@@ -1,8 +1,76 @@
+body {
+  padding: 0;
+  margin: 0;
+}
+
+#navbar {
+  height: 100px;
+  width: 100%;
+  background-color: orangered;
+}
+
+#navbar * {
+  text-decoration: none;
+  color: cornsilk;
+  vertical-align: middle;
+}
+
+#navbar a:hover, #navbar h1:hover {
+  color: dimgrey;
+}
+
+#navbar li:has(h1) {
+  margin-right: 20px;
+}
+
 nav ul, nav li {
   display: inline-block;
 }
 
-#teams, #teams div, #teams div div {
+/* ! admin teamslist */
+
+#teams {
+  background-color: orangered;
+  color: cornsilk;
+  position: absolute;
+  right: 0;
+  top: 100px;
+  width: 200px;
+  height: calc(100% - 100px);
+  overflow-y: auto;
+}
+
+#teams * {
+  padding-left: 10px;
+}
+
+div.showTeamInfo {
+  position: absolute;
+  height: calc(100% - 100px);
+  width: calc(100% - 200px);
+  top: 100px;
+  left: 0;
+  display: none;
+}
+
+div.current {
+  display: block;
+}
+
+h4.showTeamInfo {
+  width: 100%;
+  margin: 0;
+}
+
+h4.showTeamInfo:hover {
+  color: dimgrey;
+}
+
+h4.current {
+  background-color: rgba(255, 255, 255, 0.3);
+}
+
+/* #teams, #teams div, #teams div div {
   width: fit-content;
   margin: 0 auto;
 }
@@ -42,4 +110,4 @@ nav ul, nav li {
 #teams.user table tr *:nth-child(2) {
   border-left: 2px groove black;
   border-right: 2px groove black;
-}
+} */
