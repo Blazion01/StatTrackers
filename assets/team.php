@@ -61,7 +61,9 @@ function removeMember(int $team, int $user) {
 function getNextGameIDForTeam(int $team) {
   $pdo = $GLOBALS["pdo"];
   $sql = "SELECT MAX(`game_id`)+1 AS 'game' FROM `goals` WHERE `team_id` = $team;";
-  return $pdo->query($sql)->fetch(PDO::FETCH_ASSOC);
+  $result = $pdo->query($sql)->fetch(PDO::FETCH_ASSOC)['game'];
+  if(!$result) $result = 1;
+  return $result;
 }
 
 function setGameResults(int $game, int $team, array $players) {
@@ -74,7 +76,7 @@ function setGameResults(int $game, int $team, array $players) {
       $stmt = $pdo->prepare($sql);
       $stmt->execute([$game, $team, $key, $player["goals"], $player["assists"]]);
     }
-    array_push($_SESSION['messages'],['type'=>'success','content'=>'Game ('.$game.') results have been set']);
+    array_push($_SESSION['messages'],['type'=>'success','content'=>'Game ('.$game.') results for Team ('.$team.') have been set']);
   } catch (Exception $e) {
     array_push($_SESSION['messages'],['type'=>'error','content'=>$e]);
   }

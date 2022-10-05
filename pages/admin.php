@@ -39,7 +39,7 @@
 
       <?php
         if($members) {
-          $gameID = getNextGameIDForTeam($team['team_id'])['game'];
+          $gameID = getNextGameIDForTeam($team['team_id']);
       ?>
       <div class="setGameResults">
         <form action="../assets/team.php" method="post">
