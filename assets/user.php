@@ -60,6 +60,13 @@ function createUser(string $mail, string $name, string $pass) {
   return;
 }
 
+function getCurrentTeam()
+{
+  $pdo = $GLOBALS["pdo"];
+  $sql = "SELECT `team`.`name`,`team`.`team_id` FROM `team` WHERE `team`.`team_id` IN (SELECT `mtm_user_team`.`team_id` FROM `mtm_user_team` WHERE `mtm_user_team`.`user_id` = $_SESSION[userID] AND `mtm_user_team`.`active` = true);";
+  return $pdo->query($sql)->fetch(PDO::FETCH_ASSOC);
+}
+
 if (isset($_POST["bewerk"])) {
   try {
     $sql = $pdo->prepare("UPDATE `user` SET `email`=:1, `name`=:2 WHERE `user_id`=:3;");

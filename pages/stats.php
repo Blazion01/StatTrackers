@@ -1,9 +1,16 @@
 <?php include_once "./header.php";
-require_once "../assets/userContibutions.php"; ?>
-<?php $contrib = getContribution(); //print_r($contrib); ?>
+require_once "../assets/user.php"; ?>
+<?php $contrib = false; //print_r($contrib); ?>
 
+<div id="stats"></div>
 
 <div id="teams" class="user" style="text-align:center;">
+<?php
+  $team = getCurrentTeam();
+  if ($team) {
+?>
+  <h4 id="h4<?php echo $team['name'] ?>" style="border-bottom: 2px solid cornsilk;" class="showTeamInfo" onclick="show('#<?php echo $team['name'] ?>','#h4<?php echo $team['name'] ?>')"><?php echo str_replace("_"," ",$team['name']) ?></h4>
+<?php } ?>
 <?php if ($contrib) foreach ($contrib as $team => $games) { $goals = 0; $assists = 0; ?>
   <div id="<?php echo $team ?>">
     <h4 onclick="show('#<?php echo $team ?>Contrib')"><?php echo $team ?></h4>
@@ -57,25 +64,14 @@ require_once "../assets/userContibutions.php"; ?>
     </div>
   </div>
 <?php } ?>
-  <div>
-    <form action="../assets/userContibutions.php" method="post">
-      <label for="team">Nieuwe Team</label>
-      <input required type="text" name="team" id='newTeam'>
-      <input type="submit" name="newTeam" value="Maak Aan">
-    </form>
-  </div>
 </div>
 
 <script>
-  function show(team) {
-    switch ($(team).css('display')) {
-      case 'block':
-        $(team).css('display', 'none');
-        break;
-      case 'none':
-        $(team).css('display', 'block');
-        break;
-    }
+  function show(team, h4) {
+    $('h4.current').removeClass('current');
+    $('div.current').removeClass('current');
+    $(h4).addClass('current');
+    $(team).addClass('current');
   }
 </script>
 
