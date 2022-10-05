@@ -27,7 +27,7 @@ nav ul, nav li {
   display: inline-block;
 }
 
-/* ! admin teamslist */
+/* ! teamslist */
 
 #teams {
   background-color: orangered;
@@ -38,11 +38,7 @@ nav ul, nav li {
   width: 200px;
   height: calc(100% - 100px);
   overflow-y: auto;
-}
-
-#teams * {
-  padding-left: 10px;
-  width: calc(100% - 10px);
+  text-align: center;
 }
 
 div.showTeamInfo {
@@ -69,6 +65,36 @@ h4.showTeamInfo:hover {
 
 h4.current {
   background-color: rgba(255, 255, 255, 0.3);
+}
+
+/* ! team info */
+
+div.current table {
+  margin: 10px auto;
+  min-width: 200px;
+  text-align: center;
+  width: fit-content;
+  border: 4px solid black;
+}
+
+div.current table tr:last-child:has(input) td {
+  border-top: 2px solid black;
+}
+
+/* ! admin info */
+
+#admin input[type="submit"] {
+  width: 80%;
+  margin: auto;
+}
+
+/* ! stats info */
+
+/* #stats div.current table.members {
+} */
+
+#stats div.current table.members caption {
+  font-weight: bold;
 }
 
 /* #teams, #teams div, #teams div div {

@@ -2,7 +2,7 @@
 
 function getTeams() {
   $pdo = $GLOBALS["pdo"];
-  $sql = "SELECT * FROM `team`";
+  $sql = "SELECT * FROM `team` ORDER BY `team_id` ASC";
   return $pdo->query($sql)->fetchAll(PDO::FETCH_ASSOC);
 }
 
@@ -45,28 +45,25 @@ function removeMember(int $team, int $user) {
   $stmt->execute([$user, $team]);
 }
 
-function setGameResults(int $game, int $team, array $playerContributions) {
+function getNextGameIDForTeam(int $team) {
+  $pdo = $GLOBALS["pdo"];
+  $sql = "SELECT MAX(`game_id`)+1 AS 'game' FROM `goals` WHERE `team_id` = $team;";
+  return $pdo->query($sql)->fetch(PDO::FETCH_ASSOC);
+}
+
+function setGameResults(int $game, int $team, array $players) {
   $pdo = $GLOBALS["pdo"];
   $messages = $GLOBALS["messages"];
 
   try {
-    $sql = "SELECT `user_id` FROM `mtm_user_team` WHERE `team_id` = $team AND `active` = true;";
-    $players = $pdo->query($sql)->fetchAll(PDO::FETCH_ASSOC);
     foreach ($players as $key => $player) {
-      if(isset($playerContributions[$player])) {
-        $goals = $playerContributions[$player]["goals"];
-        $assists = $playerContributions[$player]["assists"];
-      } else {
-        $goals = 0;
-        $assists = 0;
-      }
-      $sql = "INSERT IGNORE INTO `goals` (`game_id`, `team_id`, `user_id`, `goals`, `assists`)
-          VALUES (?, ?, ?, ?, ?);";
+      $sql = "INSERT INTO `goals` (`game_id`, `team_id`, `user_id`, `goal_amount`, `assists`)
+          VALUES (?, ?, ?, ?, ?) ON DUPLICATE KEY UPDATE `goal_amount` = VALUE(`goal_amount`), `assists` = VALUE(`assists`);";
       $stmt = $pdo->prepare($sql);
-      $stmt->execute([$game, $team, $player, $goals, $assists]);
+      $stmt->execute([$game, $team, $key, $player["goals"], $player["assists"]]);
     }
   } catch (Exception $e) {
-    $messages[count($messages)] = $e;
+    echo $e;
     return;
   }
   $messages[count($messages)] = "Resultaten zijn erin gezet";
@@ -89,5 +86,10 @@ if (isset($_POST["removeMembers"])) {
       removeMember($_POST["team"],$user_id);
     }
   }
+  ?> <script>location.href='../pages/admin.php'</script> <?php 
+}
+
+if (isset($_POST["setGameResults"])) {
+  setGameResults($_POST["game"], $_POST["team"], $_POST["users"]);
   ?> <script>location.href='../pages/admin.php'</script> <?php 
 }

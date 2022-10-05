@@ -2,68 +2,107 @@
 require_once "../assets/user.php"; ?>
 <?php $contrib = false; //print_r($contrib); ?>
 
-<div id="stats"></div>
+<div id="stats">
+<?php
+  $team = getCurrentTeam();
+  $teamID = null;
+  if(isset($team["team_id"])) $teamID = $team["team_id"];
+  $teams = getContributedTeams($teamID);
+  if ($team) {
+?>
+  <div id="<?php echo $team['name']; ?>" class="showTeamInfo current">
+    <table class="members">
+      <caption>Current Team Members</caption>
+      <?php
+        $teamMembers = getTeamMembers($team['team_id']);
+        if($teamMembers) { foreach ($teamMembers as $key => $teamMember) { 
+      ?>
+      <tr><td><?php echo $teamMember['name']; ?></td></tr>
+      <?php } } else { ?>
+      <tr><th>None</th></tr>
+      <?php } ?>
+    </table>
+    <div class="games">
+      <table>
+        <tr>
+          <th>Game</th>
+          <th>Goals</th>
+          <th>Assists</th>
+        </tr>
+        <?php
+          $contrib = getTeamContributions($team['team_id']);
+          $goals = 0;
+          $assists = 0;
+          foreach ($contrib as $key => $game) {
+            $goals += $game['goal_amount'];
+            $assists += $game['assists'];
+        ?>
+        <tr>
+          <td><?php echo $game['game_id'] ?></td>
+          <td><?php echo $game['goal_amount'] ?></td>
+          <td><?php echo $game['assists'] ?></td>
+        </tr>
+        <?php } ?>
+        <tr>
+          <th>Total</th>
+          <td><?php echo $goals ?></td>
+          <td><?php echo $assists ?></td>
+        </tr>
+      </table>
+    </div>
+  </div>
+<?php
+  }
+  foreach ($teams as $key => $team) {
+?>
+<div id="<?php echo $team['name']; ?>" class="showTeamInfo">
+  <div class="games">
+    <table>
+      <tr>
+        <th>Game</th>
+        <th>Goals</th>
+        <th>Assists</th>
+      </tr>
+      <?php
+        $contrib = getTeamContributions($team['team_id']);
+        $goals = 0;
+        $assists = 0;
+        foreach ($contrib as $key => $game) {
+          $goals += $game['goal_amount'];
+          $assists += $game['assists'];
+      ?>
+      <tr>
+        <td><?php echo $game['game_id'] ?></td>
+        <td><?php echo $game['goal_amount'] ?></td>
+        <td><?php echo $game['assists'] ?></td>
+      </tr>
+      <?php } ?>
+      <tr>
+        <th>Total</th>
+        <td><?php echo $goals ?></td>
+        <td><?php echo $assists ?></td>
+      </tr>
+    </table>
+  </div>
+</div>
+<?php } ?>
+</div>
 
-<div id="teams" class="user" style="text-align:center;">
+<div id="teams">
+    <h3>Team List</h3>
 <?php
   $team = getCurrentTeam();
   if ($team) {
 ?>
-  <h4 id="h4<?php echo $team['name'] ?>" style="border-bottom: 2px solid cornsilk;" class="showTeamInfo" onclick="show('#<?php echo $team['name'] ?>','#h4<?php echo $team['name'] ?>')"><?php echo str_replace("_"," ",$team['name']) ?></h4>
-<?php } ?>
-<?php if ($contrib) foreach ($contrib as $team => $games) { $goals = 0; $assists = 0; ?>
-  <div id="<?php echo $team ?>">
-    <h4 onclick="show('#<?php echo $team ?>Contrib')"><?php echo $team ?></h4>
-    <div id="<?php echo $team ?>Contrib">
-      <table>
-        <tr>
-          <th>
-            GameID
-          </th>
-          <th>
-            Goals
-          </th>
-          <th>
-            Assists
-          </th>
-        </tr>
-        <?php $totalGames = count($games); foreach ($games as $game => $GandA) { ?>
-          <tr>
-            <td>
-              <?php echo $game+1 ?>
-            </td>
-            <td>
-              <?php echo $GandA['goals']; $goals += $GandA['goals']; ?>
-            </td>
-            <td>
-              <?php echo $GandA['assists']; $assists += $GandA['assists']; ?>
-            </td>
-          </tr>
-        <?php } ?>
-        <tr>
-          <td><b>Total</b></td>
-          <td><?php echo $goals ?></td>
-          <td><?php echo $assists ?></td>
-        </tr>
-        <form action="../assets/userContibutions.php" method="post">
-          <input type="hidden" name="team" value="<?php echo $team ?>">
-          <input type="hidden" name="gameID" value="<?php echo $totalGames ?>">
-          <tr>
-            <td>
-              <input type="submit" name="newGame" value="Voeg Toe">
-            </td>
-            <td>
-              <input type="number" name="goals" value="0">
-            </td>
-            <td>
-              <input type="number" name="assists" value="0">
-            </th>
-          </tr>
-        </form>
-      </table>
-    </div>
-  </div>
-<?php } ?>
+  <h4 id="h4<?php echo $team['name'] ?>" style="border-bottom: 2px solid cornsilk;" class="showTeamInfo current" onclick="show('#<?php echo $team['name'] ?>','#h4<?php echo $team['name'] ?>')"><?php echo str_replace("_"," ",$team['name']) ?></h4>
+<?php
+  }
+  foreach ($teams as $key => $team) {
+?>
+<h4 id="h4<?php echo $team['name'] ?>" class="showTeamInfo" onclick="show('#<?php echo $team['name'] ?>','#h4<?php echo $team['name'] ?>')"><?php echo str_replace("_"," ",$team['name']) ?></h4>
+<?php
+  }
+?>
 </div>
 
 <script>

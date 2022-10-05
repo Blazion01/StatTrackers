@@ -6,10 +6,8 @@
 ?>
   <?php foreach ($teams as $key => $team) { ?>
     <div id="<?php echo $team['name'] ?>" class="showTeamInfo">
-      <table class="teamMembers">
-        <tr>
-          <td colspan="3"><b>Members</b></td>
-        </tr>
+      <table class="members">
+        <caption><b>Members</b></caption>
         <form action="../assets/team.php" method="post">
           <input type="hidden" name="team" value="<?php echo $team["team_id"] ?>">
         <?php
@@ -38,9 +36,41 @@
         <?php } ?>
         </tr>
       </table>
+
+      <?php
+        if($members) {
+          $gameID = getNextGameIDForTeam($team['team_id'])['game'];
+      ?>
+      <div class="setGameResults">
+        <form action="../assets/team.php" method="post">
+          <table>
+            <caption><b>Set Game (<?php echo $gameID ?>) Results</b></caption>
+            <tr>
+              <th>Player</th>
+              <th>Goals</th>
+              <th>Assists</th>
+            </tr>
+            <input type="hidden" name="team" value="<?php echo $team["team_id"] ?>">
+            <?php
+              foreach ($members as $key => $member) {
+            ?>
+            <tr>
+              <td><?php echo $member['name'] ?></td>
+              <td><input type="number" min=0 value=0 name="users[<?php echo $member['user_id'] ?>][goals]"></td>
+              <td><input type="number" min=0 value=0 name="users[<?php echo $member['user_id'] ?>][assists]"></td>
+            </tr>
+            <?php } ?>
+            <tr>
+              <input type="hidden" name="game" value="<?php echo $gameID ?>">
+              <td colspan="3"><input type="submit" name="setGameResults" value="Set Results"></td>
+            </tr>
+          </table>
+        </form>
+      </div>
+      <?php } ?>
     </div>
   <?php } ?>
-  <div id="create" class="showTeamInfo">
+  <div id="create" class="showTeamInfo current">
     <form action="../assets/team.php" method="post">
       <label for="name">Naam: </label>
       <input type="text" name="name"><br>
@@ -49,13 +79,13 @@
   </div>
   <div id="teams">
     <h3>Team List</h3>
-    <h4 id="h4create" style="border-bottom: 2px solid cornsilk;" class="showTeamInfo" onclick="show('#create','#h4create')">Create Team</h4>
+    <h4 id="h4create" style="border-bottom: 2px solid cornsilk;" class="showTeamInfo current" onclick="show('#create','#h4create')">Create Team</h4>
     <?php foreach ($teams as $key => $team) { 
       $members = getMembers($team['team_id']);
-      // if ($members || $potentialMembers) {
+      if ($members || $potentialMembers) {
     ?>
       <h4 id="h4<?php echo $team['name'] ?>" class="showTeamInfo" onclick="show('#<?php echo $team['name'] ?>','#h4<?php echo $team['name'] ?>')"><?php echo str_replace("_"," ",$team['name']) ?></h4>
-    <?php /* } */ } ?>
+    <?php } } ?>
   </div>
 </div>
 
