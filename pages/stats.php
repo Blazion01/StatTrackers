@@ -112,6 +112,7 @@ require_once "../assets/user.php"; ?>
     $(h4).addClass('current');
     $(team).addClass('current');
   }
+  document.title = "Stats";
 </script>
 
 <?php include_once "./footer.html"; ?>

@@ -27,6 +27,28 @@ nav ul, nav li {
   display: inline-block;
 }
 
+/* ! messages */
+
+.container {
+  z-index: 2;
+}
+
+.message p {
+  z-index: 1;
+  border: 2px solid black;
+  padding: 10px;
+  margin: 0 auto;
+  width: fit-content;
+}
+
+.success {
+  border-color: green;
+}
+
+.error {
+  border-color: red;
+}
+
 /* ! teamslist */
 
 #teams {
@@ -42,11 +64,10 @@ nav ul, nav li {
 }
 
 div.showTeamInfo {
-  position: absolute;
+  position: relative;
   height: calc(100% - 100px);
   width: calc(100% - 200px);
-  top: 100px;
-  left: 0;
+  /* margin-right: 200px; */
   display: none;
 }
 
@@ -83,9 +104,13 @@ div.current table tr:last-child:has(input) td {
 
 /* ! admin info */
 
-#admin input[type="submit"] {
+#admin td[colspan] input[type="submit"] {
   width: 80%;
   margin: auto;
+}
+
+#admin td:not([colspan]) input[type="submit"] {
+  width: fit-content;
 }
 
 /* ! stats info */

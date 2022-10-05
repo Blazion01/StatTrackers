@@ -12,5 +12,7 @@
   <input type="password" name="password2" id="password2"><br>
   <input type="submit" name="registreer" value="Registreer">
 </form>
-
+<script>
+  document.title = "Registreer";
+</script>
 <?php include_once "./footer.html"; ?>

@@ -96,7 +96,6 @@
     $(h4).addClass('current');
     $(team).addClass('current');
   }
-
-
+  document.title = "Admin";
 </script>
 <?php include_once "./footer.html"; ?>

@@ -10,7 +10,15 @@
 </head>
 <body>
 <script src="../assets/app.js"></script>
-<?php session_start(); include_once "../assets/pdo.php";
+<?php session_start(); require_once "../assets/pdo.php";
   include_once "./nav.php";
+  if(isset($_SESSION['messages'])) foreach ($_SESSION['messages'] as $key => $message) {
+    array_shift($_SESSION['messages']);
+?>
+    <div onclick="hide('#message<?php echo $key ?>')" id="message<?php echo $key ?>" class="message <?php echo $message["type"] ?>">
+      <p><?php echo $message['content'] ?></p>
+    </div>
+<?php
+  }
 ?>
 <div id="container">

@@ -10,5 +10,7 @@ if (isset($_SESSION["user"])) { ?> <script>location.href="./home.php"</script> <
   <input type="password" name="password" id="password"><br>
   <input type="submit" name="login" value="Login">
 </form>
-
+<script>
+  document.title = "Login";
+</script>
 <?php include_once "./footer.html"; ?>

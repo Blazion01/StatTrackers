@@ -1,4 +1,5 @@
-<?php require_once "pdo.php";
+<?php if(!isset($_SESSION)) session_start(); require_once "pdo.php";
+  if(!isset($_SESSION['messages'])) $_SESSION['messages'] = [];
 
 function getTeams() {
   $pdo = $GLOBALS["pdo"];
@@ -8,11 +9,19 @@ function getTeams() {
 
 function createTeam(string $name) {
   $pdo = $GLOBALS["pdo"];
-  $name = str_replace(" ","_",$name);
-  $sql = "INSERT IGNORE INTO `team` (`name`)
-          VALUES (?)";
-  $stmt = $pdo->prepare($sql);
-  $stmt->execute([$name]);
+  try {
+    $sql = "INSERT INTO `team` (`name`)
+            VALUES (?); ALTER TABLE `team` AUTO_INCREMENT = 1;";
+    $stmt = $pdo->prepare($sql);
+    $stmt->execute([str_replace(" ","_",$name)]);
+    array_push($_SESSION['messages'],['type'=>'success','content'=>'Team ('.$name.') created']);
+  } catch (Exception $e) {
+    $sql = "ALTER TABLE `team` AUTO_INCREMENT = 1;";
+    $stmt = $pdo->prepare($sql);
+    $stmt->execute([]);
+    array_push($_SESSION['messages'],['type'=>'error','content'=>'Team ('.$name.') already exists']);
+  }
+  return;
 }
 
 function getMembers(int $team) {
@@ -34,6 +43,8 @@ function addMember(int $team, int $user) {
           ON DUPLICATE KEY UPDATE `active` = true;";
   $stmt = $pdo->prepare($sql);
   $stmt->execute([$user, $team]);
+  array_push($_SESSION['messages'],['type'=>'success','content'=>'User ('.$user.') added to Team ('.$team.')']);
+  return;
 }
 
 function removeMember(int $team, int $user) {
@@ -43,6 +54,8 @@ function removeMember(int $team, int $user) {
           WHERE `user_id` = ? AND `team_id` = ?;";
   $stmt = $pdo->prepare($sql);
   $stmt->execute([$user, $team]);
+  array_push($_SESSION['messages'],['type'=>'success','content'=>'User ('.$user.') removed from Team ('.$team.')']);
+  return;
 }
 
 function getNextGameIDForTeam(int $team) {
@@ -53,7 +66,6 @@ function getNextGameIDForTeam(int $team) {
 
 function setGameResults(int $game, int $team, array $players) {
   $pdo = $GLOBALS["pdo"];
-  $messages = $GLOBALS["messages"];
 
   try {
     foreach ($players as $key => $player) {
@@ -62,11 +74,10 @@ function setGameResults(int $game, int $team, array $players) {
       $stmt = $pdo->prepare($sql);
       $stmt->execute([$game, $team, $key, $player["goals"], $player["assists"]]);
     }
+    array_push($_SESSION['messages'],['type'=>'success','content'=>'Game ('.$game.') results have been set']);
   } catch (Exception $e) {
-    echo $e;
-    return;
+    array_push($_SESSION['messages'],['type'=>'error','content'=>$e]);
   }
-  $messages[count($messages)] = "Resultaten zijn erin gezet";
   return;
 }
 

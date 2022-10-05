@@ -28,6 +28,7 @@ function bewerkProfiel() {
       break;
   }
 }
+  document.title = "Profiel";
 </script>
 
 <?php include_once "./footer.html"; ?>

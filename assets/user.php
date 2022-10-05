@@ -1,4 +1,5 @@
-<?php require_once "pdo.php";
+<?php if(!isset($_SESSION)) session_start(); require_once "pdo.php";
+  if(!isset($_SESSION['messages'])) $_SESSION['messages'] = [];
 
 function getUserJson(string $user) {
   return json_decode(getUser($user)["json"],true);
@@ -53,9 +54,12 @@ function createUser(string $mail, string $name, string $pass) {
     $GLOBALS["user"] = $name;
     $GLOBALS["userEmail"] = $mail;
     $sql->execute([$mail,$name,$pass]);
-    $messages[count($messages)] = `User $name created succesfully`;
+    array_push($_SESSION['messages'],['type'=>'success','content'=>'User ('.$name.') created']);
   } catch (Exception $e) {
-    $messages[count($messages)] = $e;
+    $sql = "ALTER TABLE `user` AUTO_INCREMENT = 1;";
+    $stmt = $pdo->prepare($sql);
+    $stmt->execute([]);
+    array_push($_SESSION['messages'],['type'=>'success','content'=>'Mail ('.$mail.') or Name ('.$name.') already exists']);
   }
   return;
 }
