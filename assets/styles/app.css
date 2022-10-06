@@ -113,6 +113,18 @@ div.current table tr:last-child:has(input) td {
   width: fit-content;
 }
 
+.games table {
+  border-spacing: 0;
+}
+
+.games tr:not(:first-child)>* {
+  border-top: 2px solid black;
+}
+
+.games tr>*:not(:last-child) {
+  border-right: 2px solid black;
+}
+
 /* ! stats info */
 
 /* #stats div.current table.members {

@@ -83,6 +83,24 @@ function setGameResults(int $game, int $team, array $players) {
   return;
 }
 
+function getMember(int $member) {
+  $pdo = $GLOBALS["pdo"];
+  $sql = "SELECT `name` FROM `user` WHERE `user_id` = $member;";
+  return $pdo->query($sql)->fetch(PDO::FETCH_ASSOC);
+}
+
+function getTeamGames(int $team) {
+  $pdo = $GLOBALS["pdo"];
+  $sql = "SELECT DISTINCT `game_id` FROM `goals` WHERE `team_id` = $team;";
+  return $pdo->query($sql)->fetchAll(PDO::FETCH_ASSOC);
+}
+
+function getTeamGameContributions(int $game, int $team) {
+  $pdo = $GLOBALS["pdo"];
+  $sql = "SELECT `user_id`,`goal_amount`,`assists` FROM `goals` WHERE `game_id` = $game AND `team_id` = $team;";
+  return $pdo->query($sql)->fetchAll(PDO::FETCH_ASSOC);
+}
+
 if (isset($_POST["createTeam"])) {
   createTeam($_POST["name"]);
   ?> <script>location.href='../pages/admin.php'</script> <?php

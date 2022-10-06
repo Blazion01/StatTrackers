@@ -45,8 +45,8 @@ require_once "../assets/user.php"; ?>
         <?php } ?>
         <tr>
           <th>Total</th>
-          <td><?php echo $goals ?></td>
-          <td><?php echo $assists ?></td>
+          <th><?php echo $goals ?></th>
+          <th><?php echo $assists ?></th>
         </tr>
       </table>
     </div>
