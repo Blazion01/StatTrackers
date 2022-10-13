@@ -51,7 +51,7 @@ nav ul, nav li {
 
 /* ! teamslist */
 
-#teams {
+#teams, .games {
   background-color: orangered;
   color: cornsilk;
   position: absolute;
@@ -63,7 +63,7 @@ nav ul, nav li {
   text-align: center;
 }
 
-div.showTeamInfo {
+div.showTeamInfo, div.setGameResults {
   position: relative;
   height: calc(100% - 100px);
   width: calc(100% - 200px);
@@ -75,12 +75,12 @@ div.current {
   display: block;
 }
 
-h4.showTeamInfo {
+h4.showTeamInfo, h4.setGameResults {
   width: 100%;
   margin: 0;
 }
 
-h4.showTeamInfo:hover {
+h4.showTeamInfo:hover, h4.setGameResults:hover {
   color: dimgrey;
 }
 
@@ -104,6 +104,11 @@ div.current table tr:last-child:has(input) td {
 
 /* ! admin info */
 
+#admin, #admin div:not(#teams):not(.games) {
+  min-height: fit-content;
+  width: calc(100% - 100px);
+}
+
 #admin td[colspan] input[type="submit"] {
   width: 80%;
   margin: auto;
@@ -113,16 +118,21 @@ div.current table tr:last-child:has(input) td {
   width: fit-content;
 }
 
-.games table {
-  border-spacing: 0;
+#admin div:not(#teams) .games {
+  height: calc(100vh - 100px);
+  width: 100px;
+  position: absolute;
+  top: -10px;
+  background-color: orange;
 }
 
-.games tr:not(:first-child)>* {
-  border-top: 2px solid black;
+#admin .setGameResults.total table {
+  border-collapse: collapse;
 }
 
-.games tr>*:not(:last-child) {
-  border-right: 2px solid black;
+#admin .setGameResults.total tr:nth-child(even) * {
+  background-color: black;
+  color: white;
 }
 
 /* ! stats info */

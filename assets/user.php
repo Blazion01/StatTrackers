@@ -1,4 +1,4 @@
-<?php if(!isset($_SESSION)) session_start(); require_once "pdo.php";
+<?php if(!isset($_SESSION)) session_start(); require_once "pdo.php"; require_once "../recaptcha-php-1.11/recaptchalib.php";
   if(!isset($_SESSION['messages'])) $_SESSION['messages'] = [];
 
 function getUserJson(string $user) {
@@ -103,45 +103,4 @@ if (isset($_POST["bewerk"])) {
   } catch (Exception $e) {
     echo $e;
   }
-}
-
-if (isset($_POST["login"])) {
-  $messages = $GLOBALS["messages"];
-  if (!isset($_SESSION["user"])) {
-    $result = getUser($_POST["email"]);
-    if($result) {
-      if(password_verify($_POST['password'], $result['password'])) {
-        $GLOBALS["user"] = $result["name"];
-        $GLOBALS["userEmail"] = $_POST["email"];
-      } else {
-        $info = 'Wachtwoord is niet correct.';
-        $messages[count($messages)] = $info;
-      }
-    } else {
-      $info = 'Email niet gevonden.';
-      $messages[count($messages)] = $info;
-    }
-  }
-}
-
-if (isset($_POST["registreer"])) {
-  $messages = $GLOBALS["messages"];
-  if ($_POST["password"] == $_POST["password2"]) {
-    createUser($_POST["email"],$_POST["name"],$_POST["password"]);
-  } else {
-    $info = 'Wachtwoorden kwamen niet overeen.';
-    $messages[count($messages)] = $info;
-  }
-}
-
-if (isset($GLOBALS["user"]) && !isset($_SESSION["user"])) {
-  $messages = $GLOBALS["messages"];
-  $_SESSION["user"] = $GLOBALS["user"];
-  $_SESSION["userEmail"] = $GLOBALS["userEmail"];
-  $result = getUser($GLOBALS["userEmail"]);
-  $_SESSION["userID"] = $result['user_id'];
-  $roles = json_decode($result['json'],true)['roles'];
-  if($roles) $_SESSION["userRoles"] = $roles;
-  ?> <script>location.href="../pages/home.php"</script> <?php
-  $messages[count($messages)] = `Logged in as: $GLOBALS[user]`;
 }
