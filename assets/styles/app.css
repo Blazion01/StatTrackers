@@ -51,7 +51,7 @@ nav ul, nav li {
 
 /* ! teamslist */
 
-#teams, .games {
+#teams, #admin div:not(#teams) .games {
   background-color: orangered;
   color: cornsilk;
   position: absolute;
@@ -126,62 +126,17 @@ div.current table tr:last-child:has(input) td {
   background-color: orange;
 }
 
-#admin .setGameResults.total table {
+#admin .setGameResults.total table, #stats .games table {
   border-collapse: collapse;
 }
 
-#admin .setGameResults.total tr:nth-child(even) * {
+#admin .setGameResults.total tr:nth-child(even) *, #stats .games tr:nth-child(even) * {
   background-color: black;
   color: white;
 }
 
 /* ! stats info */
 
-/* #stats div.current table.members {
-} */
-
 #stats div.current table.members caption {
   font-weight: bold;
 }
-
-/* #teams, #teams div, #teams div div {
-  width: fit-content;
-  margin: 0 auto;
-}
-
-#teams>div {
-  min-width: 100px;
-  border: 5px solid black;
-  border-radius: 10px;
-  overflow: hidden;
-  margin-bottom: 10px;
-  text-align: center;
-}
-
-#teams div h4 {
-  width: 100%;
-  height: 100%;
-  line-height: 20px;
-  margin: 0 auto;
-}
-
-#teams div div {
-  display: none;
-}
-
-#teams table {
-  border-spacing: 0;
-}
-
-#teams table td {
-  border-top: 2px solid black;
-}
-
-#teams table th {
-  border-top: 5px solid black;
-}
-
-#teams.user table tr *:nth-child(2) {
-  border-left: 2px groove black;
-  border-right: 2px groove black;
-} */
