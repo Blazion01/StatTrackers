@@ -1,7 +1,7 @@
 <?php include_once "./header.php";
   require_once "../assets/user.php"; ?>
 
-<form action="" method="post">
+<form action="./verify.php" method="post">
   <label for="email">Email</label>
   <input type="email" name="email" id="email"><br>
   <label for="name">Gebruikersnaam</label>

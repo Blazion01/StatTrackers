@@ -3,7 +3,7 @@
 if (isset($_SESSION["user"])) { ?> <script>location.href="./home.php"</script> <?php }
 ?>
 
-<form id="login" action="verify.php" method="post">
+<form id="login" action="./verify.php" method="post">
   <label for="email">Email</label>
   <input type="email" name="email" id="email" required><br>
   <label for="password">Wachtwoord</label>
