@@ -9,6 +9,7 @@
     <?php } ?>
     <div class="games" style="top:-16px;">
       <h3>User List</h3>
+      <input placeholder="User filter" onchange="userSearch()" type="search" name="q" id="userSearch">
       <?php $c = 0; foreach ($users as $key => $user) { if ($user["user_id"] == $_SESSION["userID"]) continue; ?>
         <h4 id="h4User<?php echo $key ?>" class="setGameResults <?php if ($c == 0) {echo "current"; $c++;} ?>" onclick="showGame('#Users','#User<?php echo $key ?>','#h4User<?php echo $key ?>');"><?php echo $user["name"] ?></h4>
       <?php } ?>
@@ -191,6 +192,8 @@
     <h4 id="h4Users" class="showTeamInfo current" onclick="showTeam('#Users','#h4Users')">Users</h4>
     <h3>Team List</h3>
     <h4 id="h4create" style="border-bottom: 2px solid cornsilk;" class="showTeamInfo" onclick="showTeam('#create','#h4create')">Create Team</h4>
+    <section id="createdTeams">
+      <input placeholder="Team filter" onchange="teamSearch()" type="search" name="q" id="teamSearch">
     <?php foreach ($teams as $key => $team) { 
       $members = getMembers($team['team_id']);
       $games = getTeamGames($team["team_id"]);
@@ -198,6 +201,7 @@
     ?>
       <h4 id="h4<?php echo $team['name'] ?>" class="showTeamInfo" onclick="showTeam('#<?php echo $team['name'] ?>','#h4<?php echo $team['name'] ?>');"><?php echo str_replace("_"," ",$team['name']) ?></h4>
     <?php } } ?>
+    </section>
   </div>
 </div>
 
@@ -213,6 +217,42 @@
     $(team).find('div.setGameResults.current').removeClass('current');
     $(h4).addClass('current');
     $(game).addClass('current');
+  }
+  function userSearch() {
+    let search = $('#userSearch').val().toLowerCase();
+    var userList = $('#Users').find('.games').find('h4');
+    if (search == "") {
+      userList.each(function() {
+        $(this).css('display','block');
+      });
+      return;
+    }
+    userList.each(function() {
+      console.log($(this));
+      if ($(this).text().toLowerCase().includes(search)) {
+        $(this).css('display','block');
+      } else {
+        $(this).css('display','none');
+      }
+    });
+  }
+  function teamSearch() {
+    let search = $('#teamSearch').val().toLowerCase();
+    var userList = $('#createdTeams').find('h4');
+    if (search == "") {
+      userList.each(function() {
+        $(this).css('display','block');
+      });
+      return;
+    }
+    userList.each(function() {
+      console.log($(this));
+      if ($(this).text().toLowerCase().includes(search)) {
+        $(this).css('display','block');
+      } else {
+        $(this).css('display','none');
+      }
+    });
   }
   document.title = "Admin";
 </script>

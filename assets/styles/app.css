@@ -27,6 +27,10 @@ nav ul, nav li {
   display: inline-block;
 }
 
+input[type="search"] {
+  text-align: center;
+}
+
 /* ! messages */
 
 .container {

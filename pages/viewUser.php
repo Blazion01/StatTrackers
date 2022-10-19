@@ -90,20 +90,21 @@ require_once "../assets/team.php"; ?>
 </div>
 
 <div id="teams">
-    <h3>Team List</h3>
-<?php
-  $team = getCurrentTeam($_GET['userID']);
-  if ($team) {
-?>
-  <h4 id="h4<?php echo $team['name'] ?>" style="border-bottom: 2px solid cornsilk;" class="showTeamInfo current" onclick="show('#<?php echo $team['name'] ?>','#h4<?php echo $team['name'] ?>')"><?php echo str_replace("_"," ",$team['name']) ?></h4>
-<?php
-  }
-  foreach ($teams as $key => $team) {
-?>
-<h4 id="h4<?php echo $team['name'] ?>" class="showTeamInfo" onclick="show('#<?php echo $team['name'] ?>','#h4<?php echo $team['name'] ?>')"><?php echo str_replace("_"," ",$team['name']) ?></h4>
-<?php
-  }
-?>
+  <h3>Team List</h3>
+  <section id="createdTeams">
+    <input placeholder="Team filter" onchange="teamSearch()" type="search" name="q" id="teamSearch">
+    <?php
+      $team = getCurrentTeam($_GET['userID']);
+      if ($team) {
+    ?>
+      <h4 id="h4<?php echo $team['name'] ?>" style="border-bottom: 2px solid cornsilk;" class="showTeamInfo current" onclick="show('#<?php echo $team['name'] ?>','#h4<?php echo $team['name'] ?>')"><?php echo str_replace("_"," ",$team['name']) ?></h4>
+    <?php
+      }
+      foreach ($teams as $key => $team) {
+    ?>
+      <h4 id="h4<?php echo $team['name'] ?>" class="showTeamInfo" onclick="show('#<?php echo $team['name'] ?>','#h4<?php echo $team['name'] ?>')"><?php echo str_replace("_"," ",$team['name']) ?></h4>
+    <?php } ?>
+  </section>
 </div>
 
 <script>
@@ -114,6 +115,24 @@ require_once "../assets/team.php"; ?>
     $(team).addClass('current');
   }
   document.title = "Stats | <?php echo getMember($_GET["userID"])['name'] ?>";
+  function teamSearch() {
+    let search = $('#teamSearch').val().toLowerCase();
+    var userList = $('#createdTeams').find('h4');
+    if (search == "") {
+      userList.each(function() {
+        $(this).css('display','block');
+      });
+      return;
+    }
+    userList.each(function() {
+      console.log($(this));
+      if ($(this).text().toLowerCase().includes(search)) {
+        $(this).css('display','block');
+      } else {
+        $(this).css('display','none');
+      }
+    });
+  }
 </script>
 
 <?php include_once "./footer.html"; ?>
