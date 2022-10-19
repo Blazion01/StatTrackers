@@ -1,4 +1,5 @@
 <?php
+  $GLOBALS["messages"] = [];
   $servername = "127.0.0.1:3306";
   $dbname = "StatTrackers";
   $svname = "mariadb-10.4.24";
@@ -15,8 +16,8 @@
   
 function getUser($email) {
   $pdo = $GLOBALS["pdo"];
-  $sql = "SELECT `ID`,`email`,`name`,`password`,`game_contribution` FROM `user` WHERE `email` = ?";
+  $sql = "SELECT `user_id`,`email`,`json`,`name`,`password` FROM `user` WHERE `email` = ?";
   $stmt = $pdo->prepare($sql);
   $stmt->execute([$email]);
-  return $stmt->fetch();
+  return $stmt->fetch(PDO::FETCH_ASSOC);
 };

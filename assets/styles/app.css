@@ -1,44 +1,147 @@
+body {
+  padding: 0;
+  margin: 0;
+}
+
+#navbar {
+  height: 100px;
+  width: 100%;
+  background-color: orangered;
+}
+
+#navbar * {
+  text-decoration: none;
+  color: cornsilk;
+  vertical-align: middle;
+}
+
+#navbar a:hover, #navbar h1:hover {
+  color: dimgrey;
+}
+
+#navbar li:has(h1) {
+  margin-right: 20px;
+}
+
 nav ul, nav li {
   display: inline-block;
 }
 
-#teams, #teams div, #teams div div {
+input[type="search"] {
+  text-align: center;
+}
+
+/* ! messages */
+
+.container {
+  z-index: 2;
+}
+
+.message p {
+  z-index: 1;
+  border: 2px solid black;
+  padding: 10px;
+  margin: 0 auto;
   width: fit-content;
-  margin: 0 auto;
 }
 
-#teams>div {
-  min-width: 100px;
-  border: 5px solid black;
-  border-radius: 10px;
-  overflow: hidden;
-  margin-bottom: 10px;
+.success {
+  border-color: green;
 }
 
-#teams div h4 {
-  width: 100%;
-  height: 100%;
-  line-height: 20px;
-  margin: 0 auto;
+.error {
+  border-color: red;
 }
 
-#teams div div {
+/* ! teamslist */
+
+#teams, #admin div:not(#teams) .games {
+  background-color: orangered;
+  color: cornsilk;
+  position: absolute;
+  right: 0;
+  top: 100px;
+  width: 200px;
+  height: calc(100% - 100px);
+  overflow-y: auto;
+  text-align: center;
+}
+
+div.showTeamInfo, div.setGameResults {
+  position: relative;
+  height: calc(100% - 100px);
+  width: calc(100% - 200px);
+  /* margin-right: 200px; */
   display: none;
 }
 
-#teams table {
-  border-spacing: 0;
+div.current {
+  display: block;
 }
 
-#teams table td {
+h4.showTeamInfo, h4.setGameResults {
+  width: 100%;
+  margin: 0;
+}
+
+h4.showTeamInfo:hover, h4.setGameResults:hover {
+  color: dimgrey;
+}
+
+h4.current {
+  background-color: rgba(255, 255, 255, 0.3);
+}
+
+/* ! team info */
+
+div.current table {
+  margin: 10px auto;
+  min-width: 200px;
+  text-align: center;
+  width: fit-content;
+  border: 4px solid black;
+}
+
+div.current table tr:last-child:has(input) td {
   border-top: 2px solid black;
 }
 
-#teams table th {
-  border-top: 5px solid black;
+/* ! admin info */
+
+#admin, #admin div:not(#teams):not(.games) {
+  min-height: fit-content;
+  width: calc(100% - 100px);
 }
 
-#teams table tr *:nth-child(2) {
-  border-left: 2px groove black;
-  border-right: 2px groove black;
+#admin td[colspan] input[type="submit"] {
+  width: 80%;
+  margin: auto;
+}
+
+#admin td:not([colspan]) input[type="submit"] {
+  width: fit-content;
+}
+
+#admin div:not(#teams) .games {
+  height: calc(100vh - 100px);
+  min-width: 100px;
+  width: fit-content;
+  position: absolute;
+  top: -10px;
+  background-color: orange;
+}
+
+#admin .setGameResults.total table, #stats .games table {
+  border-collapse: collapse;
+}
+
+#admin .setGameResults.total tr:nth-child(even) *, #stats .games tr:nth-child(even) * {
+  background-color: black;
+  color: white;
+}
+
+/* ! stats info */
+
+#stats div.current table.members caption {
+  font-weight: bold;
 }
