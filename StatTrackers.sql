@@ -41,8 +41,8 @@ CREATE TABLE `user` (
 -- Gegevens worden geëxporteerd voor tabel `user`
 --
 
-INSERT INTO `user` (`ID`, `email`, `name`, `password`, `game_contribution`) VALUES
-(1, 'r.b.jansen03@gmail.com', 'Blazion', '$2y$10$0UNkSc7SlSW3ePERTRGeeeKQElBkx0jHcXh/IZbRYhtUEv8WSV/0i', '{\"TestTeam\":[{\"goals\":2,\"assists\":0},{\"goals\":1,\"assists\":1}],\"BetaTeam\":[{\"goals\":1,\"assists\":2}]}');
+-- INSERT INTO `user` (`ID`, `email`, `name`, `password`, `game_contribution`) VALUES
+-- (1, -, 'Blazion', -, '{\"TestTeam\":[{\"goals\":2,\"assists\":0},{\"goals\":1,\"assists\":1}],\"BetaTeam\":[{\"goals\":1,\"assists\":2}]}');
 
 --
 -- Indexen voor geëxporteerde tabellen
