@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Gegenereerd op: 30 sep 2022 om 11:59
+-- Gegenereerd op: 19 okt 2022 om 13:24
 -- Serverversie: 10.4.24-MariaDB
 -- PHP-versie: 8.1.6
 
@@ -29,13 +29,33 @@ SET time_zone = "+00:00";
 
 DROP TABLE IF EXISTS `goals`;
 CREATE TABLE `goals` (
-  `goal_id` int(11) NOT NULL,
   `game_id` int(11) NOT NULL,
   `team_id` int(11) NOT NULL,
   `user_id` int(11) NOT NULL,
-  `goals` int(11) NOT NULL DEFAULT 0,
-  `assists` int(11) NOT NULL DEFAULT 0
+  `goal_amount` int(11) NOT NULL,
+  `assists` int(11) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+--
+-- Tabel leegmaken voor invoegen `goals`
+--
+
+TRUNCATE TABLE `goals`;
+--
+-- Gegevens worden geëxporteerd voor tabel `goals`
+--
+
+INSERT INTO `goals` (`game_id`, `team_id`, `user_id`, `goal_amount`, `assists`) VALUES
+(1, 1, 1, 2, 1),
+(1, 1, 2, 1, 2),
+(1, 2, 1, 0, 1),
+(1, 2, 2, 1, 1),
+(2, 2, 1, 2, 0),
+(2, 2, 2, 0, 2),
+(3, 2, 1, 1, 1),
+(3, 2, 2, 0, 0),
+(4, 2, 1, 2, 2),
+(4, 2, 2, 2, 2);
 
 -- --------------------------------------------------------
 
@@ -45,20 +65,25 @@ CREATE TABLE `goals` (
 
 DROP TABLE IF EXISTS `mtm_user_team`;
 CREATE TABLE `mtm_user_team` (
-  `mtm_id` int(11) NOT NULL,
-  `user_id` int(11) NOT NULL,
   `team_id` int(11) NOT NULL,
+  `user_id` int(11) NOT NULL,
   `active` tinyint(1) NOT NULL DEFAULT 1
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 --
+-- Tabel leegmaken voor invoegen `mtm_user_team`
+--
+
+TRUNCATE TABLE `mtm_user_team`;
+--
 -- Gegevens worden geëxporteerd voor tabel `mtm_user_team`
 --
 
-REPLACE INTO `mtm_user_team` (`mtm_id`, `user_id`, `team_id`, `active`) VALUES
-(1, 1, 1, 0),
-(2, 1, 2, 1),
-(3, 2, 2, 1);
+INSERT INTO `mtm_user_team` (`team_id`, `user_id`, `active`) VALUES
+(1, 1, 0),
+(1, 2, 0),
+(2, 1, 1),
+(2, 2, 1);
 
 -- --------------------------------------------------------
 
@@ -73,10 +98,15 @@ CREATE TABLE `team` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 --
+-- Tabel leegmaken voor invoegen `team`
+--
+
+TRUNCATE TABLE `team`;
+--
 -- Gegevens worden geëxporteerd voor tabel `team`
 --
 
-REPLACE INTO `team` (`team_id`, `name`) VALUES
+INSERT INTO `team` (`team_id`, `name`) VALUES
 (2, 'Beta_Team'),
 (1, 'Test_Team');
 
@@ -92,17 +122,21 @@ CREATE TABLE `user` (
   `email` text NOT NULL,
   `json` longtext CHARACTER SET utf8mb4 COLLATE utf8mb4_bin DEFAULT NULL,
   `name` varchar(255) NOT NULL,
-  `password` varchar(255) NOT NULL,
-  `game_contribution` longtext CHARACTER SET utf8mb4 COLLATE utf8mb4_bin DEFAULT '{""}' COMMENT 'team { game { goals = ?, assists = ? } }'
+  `password` varchar(255) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
+--
+-- Tabel leegmaken voor invoegen `user`
+--
+
+TRUNCATE TABLE `user`;
 --
 -- Gegevens worden geëxporteerd voor tabel `user`
 --
 
-REPLACE INTO `user` (`user_id`, `email`, `json`, `name`, `password`, `game_contribution`) VALUES
-(1, 'r.b.jansen03@gmail.com', '{\"roles\": [\"owner\",\"dev\"]}', 'Blazion', '$2y$10$0UNkSc7SlSW3ePERTRGeeeKQElBkx0jHcXh/IZbRYhtUEv8WSV/0i', '{\"TestTeam\":[{\"goals\":2,\"assists\":0},{\"goals\":1,\"assists\":1}],\"BetaTeam\":[{\"goals\":1,\"assists\":2}]}'),
-(2, '6010444@mborijnland.nl', NULL, 'Razor', '$2y$10$f7BN6QugZEFtFR9k989OhOLyatbJFOKSFp/fyD84R5m1Pstx7iZTK', '{\"\"}');
+INSERT INTO `user` (`user_id`, `email`, `json`, `name`, `password`) VALUES
+(1, 'r.b.jansen03@gmail.com', '{\"roles\": [\"owner\",\"dev\"]}', 'Blazion', 'Leeg'),
+(2, '6010444@mborijnland.nl', NULL, 'Razor', 'Leeg');
 
 --
 -- Indexen voor geëxporteerde tabellen
@@ -112,16 +146,16 @@ REPLACE INTO `user` (`user_id`, `email`, `json`, `name`, `password`, `game_contr
 -- Indexen voor tabel `goals`
 --
 ALTER TABLE `goals`
-  ADD PRIMARY KEY (`goal_id`),
-  ADD KEY `SECONDARY` (`team_id`,`user_id`,`game_id`),
-  ADD KEY `user_id` (`user_id`);
+  ADD UNIQUE KEY `ID_COMBO` (`game_id`,`team_id`,`user_id`) USING BTREE,
+  ADD KEY `user_id` (`user_id`),
+  ADD KEY `team_id` (`team_id`);
 
 --
 -- Indexen voor tabel `mtm_user_team`
 --
 ALTER TABLE `mtm_user_team`
-  ADD PRIMARY KEY (`mtm_id`),
-  ADD UNIQUE KEY `user_team_combination` (`user_id`,`team_id`) USING BTREE;
+  ADD UNIQUE KEY `ID_COMBO` (`team_id`,`user_id`) USING BTREE,
+  ADD KEY `user_id` (`user_id`);
 
 --
 -- Indexen voor tabel `team`
@@ -135,23 +169,12 @@ ALTER TABLE `team`
 --
 ALTER TABLE `user`
   ADD PRIMARY KEY (`user_id`),
+  ADD UNIQUE KEY `name` (`name`),
   ADD UNIQUE KEY `email` (`email`) USING HASH;
 
 --
 -- AUTO_INCREMENT voor geëxporteerde tabellen
 --
-
---
--- AUTO_INCREMENT voor een tabel `goals`
---
-ALTER TABLE `goals`
-  MODIFY `goal_id` int(11) NOT NULL AUTO_INCREMENT;
-
---
--- AUTO_INCREMENT voor een tabel `mtm_user_team`
---
-ALTER TABLE `mtm_user_team`
-  MODIFY `mtm_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
 
 --
 -- AUTO_INCREMENT voor een tabel `team`
@@ -173,16 +196,15 @@ ALTER TABLE `user`
 -- Beperkingen voor tabel `goals`
 --
 ALTER TABLE `goals`
-  ADD CONSTRAINT `goals_ibfk_1` FOREIGN KEY (`team_id`) REFERENCES `team` (`team_id`),
-  ADD CONSTRAINT `goals_ibfk_2` FOREIGN KEY (`user_id`) REFERENCES `user` (`user_id`);
+  ADD CONSTRAINT `goals_ibfk_1` FOREIGN KEY (`user_id`) REFERENCES `user` (`user_id`),
+  ADD CONSTRAINT `goals_ibfk_2` FOREIGN KEY (`team_id`) REFERENCES `team` (`team_id`);
 
 --
 -- Beperkingen voor tabel `mtm_user_team`
 --
 ALTER TABLE `mtm_user_team`
   ADD CONSTRAINT `mtm_user_team_ibfk_1` FOREIGN KEY (`team_id`) REFERENCES `team` (`team_id`),
-  ADD CONSTRAINT `mtm_user_team_ibfk_2` FOREIGN KEY (`team_id`) REFERENCES `team` (`team_id`),
-  ADD CONSTRAINT `mtm_user_team_ibfk_3` FOREIGN KEY (`user_id`) REFERENCES `user` (`user_id`);
+  ADD CONSTRAINT `mtm_user_team_ibfk_2` FOREIGN KEY (`user_id`) REFERENCES `user` (`user_id`);
 COMMIT;
 
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
