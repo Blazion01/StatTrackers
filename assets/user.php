@@ -5,6 +5,12 @@ function getUserJson(string $user) {
   return json_decode(getUser($user)["json"],true);
 }
 
+function getAllUsers() {
+  $pdo = $GLOBALS["pdo"];
+  $sql = "SELECT `user_id`,`name`,`email` FROM `user`";
+  return $pdo->query($sql)->fetchAll(PDO::FETCH_ASSOC);
+}
+
 function addRole(string $user, string $role) {
   $pdo = $GLOBALS["pdo"];
   $messages = $GLOBALS["messages"];
@@ -64,30 +70,30 @@ function createUser(string $mail, string $name, string $pass) {
   return;
 }
 
-function getCurrentTeam()
+function getCurrentTeam(int $user)
 {
   $pdo = $GLOBALS["pdo"];
-  $sql = "SELECT `team`.`name`,`team`.`team_id` FROM `team` WHERE `team`.`team_id` IN (SELECT `mtm_user_team`.`team_id` FROM `mtm_user_team` WHERE `mtm_user_team`.`user_id` = $_SESSION[userID] AND `mtm_user_team`.`active` = true);";
+  $sql = "SELECT `team`.`name`,`team`.`team_id` FROM `team` WHERE `team`.`team_id` IN (SELECT `mtm_user_team`.`team_id` FROM `mtm_user_team` WHERE `mtm_user_team`.`user_id` = $user AND `mtm_user_team`.`active` = true);";
   return $pdo->query($sql)->fetch(PDO::FETCH_ASSOC);
 }
 
-function getTeamMembers(int $team) {
+function getTeamMembers(int $team, int $user) {
   $pdo = $GLOBALS["pdo"];
-  $sql = "SELECT `user`.`name` FROM `user` WHERE `user`.`user_id` IN (SELECT `mtm_user_team`.`user_id` FROM `mtm_user_team` WHERE `mtm_user_team`.`team_id` = $team AND `mtm_user_team`.`active` = true) AND `user`.`user_id` != $_SESSION[userID];";
+  $sql = "SELECT `user`.`name` FROM `user` WHERE `user`.`user_id` IN (SELECT `mtm_user_team`.`user_id` FROM `mtm_user_team` WHERE `mtm_user_team`.`team_id` = $team AND `mtm_user_team`.`active` = true) AND `user`.`user_id` != $user;";
   return $pdo->query($sql)->fetchAll(PDO::FETCH_ASSOC);
 }
 
-function getTeamContributions(int $team) {
+function getTeamContributions(int $team, int $user) {
   $pdo = $GLOBALS["pdo"];
-  $sql = "SELECT `game_id`,`goal_amount`,`assists` FROM `goals` WHERE `team_id` = $team AND `user_id` = $_SESSION[userID];";
+  $sql = "SELECT `game_id`,`goal_amount`,`assists` FROM `goals` WHERE `team_id` = $team AND `user_id` = $user;";
   return $pdo->query($sql)->fetchAll(PDO::FETCH_ASSOC);
 }
 
-function getContributedTeams($team) {
+function getContributedTeams($team, int $user) {
   $pdo = $GLOBALS["pdo"];
   $sql = "SELECT `team`.* FROM `team` WHERE `team`.`team_id` IN (SELECT DISTINCT `goals`.`team_id` FROM `goals` WHERE ";
   if(is_int($team)) $sql .= "`goals`.`team_id` != $team AND ";
-  $sql .= "`goals`.`user_id` = $_SESSION[userID]) ORDER BY `team`.`team_id` ASC;";
+  $sql .= "`goals`.`user_id` = $user) ORDER BY `team`.`team_id` ASC;";
   return $pdo->query($sql)->fetchAll(PDO::FETCH_ASSOC);
 }
 

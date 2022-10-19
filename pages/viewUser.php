@@ -1,20 +1,21 @@
 <?php include_once "./header.php";
-require_once "../assets/user.php"; ?>
+require_once "../assets/user.php";
+require_once "../assets/team.php"; ?>
 <?php $contrib = false; //print_r($contrib); ?>
 
 <div id="stats">
 <?php
-  $team = getCurrentTeam($_SESSION['userID']);
+  $team = getCurrentTeam($_GET['userID']);
   $teamID = null;
   if(isset($team["team_id"])) $teamID = $team["team_id"];
-  $teams = getContributedTeams($teamID, $_SESSION['userID']);
+  $teams = getContributedTeams($teamID, $_GET['userID']);
   if ($team) {
 ?>
   <div id="<?php echo $team['name']; ?>" class="showTeamInfo current">
     <table class="members">
       <caption>Current Team Members</caption>
       <?php
-        $teamMembers = getTeamMembers($team['team_id'], $_SESSION['userID']);
+        $teamMembers = getTeamMembers($team['team_id'], $_GET['userID']);
         if($teamMembers) { foreach ($teamMembers as $key => $teamMember) { 
       ?>
       <tr><td><?php echo $teamMember['name']; ?></td></tr>
@@ -30,7 +31,7 @@ require_once "../assets/user.php"; ?>
           <th>Assists</th>
         </tr>
         <?php
-          $contrib = getTeamContributions($team['team_id'], $_SESSION['userID']);
+          $contrib = getTeamContributions($team['team_id'], $_GET['userID']);
           $goals = 0;
           $assists = 0;
           foreach ($contrib as $key => $game) {
@@ -64,7 +65,7 @@ require_once "../assets/user.php"; ?>
         <th>Assists</th>
       </tr>
       <?php
-        $contrib = getTeamContributions($team['team_id'], $_SESSION['userID']);
+        $contrib = getTeamContributions($team['team_id'], $_GET['userID']);
         $goals = 0;
         $assists = 0;
         foreach ($contrib as $key => $game) {
@@ -91,7 +92,7 @@ require_once "../assets/user.php"; ?>
 <div id="teams">
     <h3>Team List</h3>
 <?php
-  $team = getCurrentTeam($_SESSION['userID']);
+  $team = getCurrentTeam($_GET['userID']);
   if ($team) {
 ?>
   <h4 id="h4<?php echo $team['name'] ?>" style="border-bottom: 2px solid cornsilk;" class="showTeamInfo current" onclick="show('#<?php echo $team['name'] ?>','#h4<?php echo $team['name'] ?>')"><?php echo str_replace("_"," ",$team['name']) ?></h4>
@@ -112,7 +113,7 @@ require_once "../assets/user.php"; ?>
     $(h4).addClass('current');
     $(team).addClass('current');
   }
-  document.title = "Stats";
+  document.title = "Stats | <?php echo getMember($_GET["userID"])['name'] ?>";
 </script>
 
 <?php include_once "./footer.html"; ?>

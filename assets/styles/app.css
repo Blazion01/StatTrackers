@@ -120,7 +120,8 @@ div.current table tr:last-child:has(input) td {
 
 #admin div:not(#teams) .games {
   height: calc(100vh - 100px);
-  width: 100px;
+  min-width: 100px;
+  width: fit-content;
   position: absolute;
   top: -10px;
   background-color: orange;

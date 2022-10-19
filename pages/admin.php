@@ -1,5 +1,19 @@
 <?php include_once "./header.php"; require_once "../assets/team.php"; require_once "../assets/user.php";?>
 <div id="admin">
+  <div id="Users" class="showTeamInfo current">
+    <?php $c = 0; $users = getAllUsers(); foreach ($users as $key => $user) { if ($user["user_id"] == $_SESSION["userID"]) continue; ?>
+      <div id="User<?php echo $key ?>" class="setGameResults <?php if ($c == 0) {echo "current"; $c++;} ?>">
+        <p>Email: <?php echo $user['email'] ?></p>
+        <a href="./viewUser.php?userID=<?php echo $user['user_id'] ?>">View</a>
+      </div>
+    <?php } ?>
+    <div class="games" style="top:-16px;">
+      <h3>User List</h3>
+      <?php $c = 0; foreach ($users as $key => $user) { if ($user["user_id"] == $_SESSION["userID"]) continue; ?>
+        <h4 id="h4User<?php echo $key ?>" class="setGameResults <?php if ($c == 0) {echo "current"; $c++;} ?>" onclick="showGame('#Users','#User<?php echo $key ?>','#h4User<?php echo $key ?>');"><?php echo $user["name"] ?></h4>
+      <?php } ?>
+    </div>
+  </div>
 <?php
   $teams = getTeams();
   $potentialMembers = getPotentialMembers();
@@ -166,7 +180,7 @@
       </div>
     </div>
   <?php } ?>
-  <div id="create" class="showTeamInfo current">
+  <div id="create" class="showTeamInfo">
     <form action="../assets/team.php" method="post">
       <label for="name">Naam: </label>
       <input type="text" name="name"><br>
@@ -174,8 +188,9 @@
     </form>
   </div>
   <div id="teams">
+    <h4 id="h4Users" class="showTeamInfo current" onclick="showTeam('#Users','#h4Users')">Users</h4>
     <h3>Team List</h3>
-    <h4 id="h4create" style="border-bottom: 2px solid cornsilk;" class="showTeamInfo current" onclick="showTeam('#create','#h4create')">Create Team</h4>
+    <h4 id="h4create" style="border-bottom: 2px solid cornsilk;" class="showTeamInfo" onclick="showTeam('#create','#h4create')">Create Team</h4>
     <?php foreach ($teams as $key => $team) { 
       $members = getMembers($team['team_id']);
       $games = getTeamGames($team["team_id"]);
