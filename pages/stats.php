@@ -9,6 +9,7 @@ require_once "../assets/user.php"; ?>
   if(isset($team["team_id"])) $teamID = $team["team_id"];
   $teams = getContributedTeams($teamID, $_SESSION['userID']);
   if ($team) {
+    // Print current team
 ?>
   <div id="<?php echo $team['name']; ?>" class="showTeamInfo current">
     <table class="members">
@@ -30,6 +31,7 @@ require_once "../assets/user.php"; ?>
           <th>Assists</th>
         </tr>
         <?php
+          // Print team contributions per game
           $contrib = getTeamContributions($team['team_id'], $_SESSION['userID']);
           $goals = 0;
           $assists = 0;
@@ -54,6 +56,7 @@ require_once "../assets/user.php"; ?>
 <?php
   }
   foreach ($teams as $key => $team) {
+    // Print contributed teams
 ?>
 <div id="<?php echo $team['name']; ?>" class="showTeamInfo">
   <div class="games">
@@ -64,6 +67,7 @@ require_once "../assets/user.php"; ?>
         <th>Assists</th>
       </tr>
       <?php
+          // Print team contributions per game
         $contrib = getTeamContributions($team['team_id'], $_SESSION['userID']);
         $goals = 0;
         $assists = 0;
@@ -93,8 +97,10 @@ require_once "../assets/user.php"; ?>
   <section id="createdTeams">
     <input placeholder="Team filter" onchange="teamSearch()" type="search" name="q" id="teamSearch">
     <?php
+      // List of all contributed teams
       $team = getCurrentTeam($_SESSION['userID']);
       if ($team) {
+        // Put current team on top even if there are no games tied to it
     ?>
       <h4 id="h4<?php echo $team['name'] ?>" style="border-bottom: 2px solid cornsilk;" class="showTeamInfo current" onclick="show('#<?php echo $team['name'] ?>','#h4<?php echo $team['name'] ?>')"><?php echo str_replace("_"," ",$team['name']) ?></h4>
     <?php
@@ -107,6 +113,7 @@ require_once "../assets/user.php"; ?>
 </div>
 
 <script>
+  // To switch between team information
   function show(team, h4) {
     $('h4.current').removeClass('current');
     $('div.current').removeClass('current');
@@ -114,9 +121,11 @@ require_once "../assets/user.php"; ?>
     $(team).addClass('current');
   }
   document.title = "Stats";
+  // Filter Teams
   function teamSearch() {
     let search = $('#teamSearch').val().toLowerCase();
     var userList = $('#createdTeams').find('h4');
+    // Called userList because copy-paste
     if (search == "") {
       userList.each(function() {
         $(this).css('display','block');

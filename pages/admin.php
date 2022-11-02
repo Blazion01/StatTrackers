@@ -1,7 +1,7 @@
 <?php include_once "./header.php"; require_once "../assets/team.php"; require_once "../assets/user.php";?>
 <div id="admin">
   <div id="Users" class="showTeamInfo current">
-    <?php $c = 0; $users = getAllUsers(); foreach ($users as $key => $user) { if ($user["user_id"] == $_SESSION["userID"]) continue; ?>
+    <?php $c = 0; $users = getAllUsers(); foreach ($users as $key => $user) { if ($user["user_id"] == $_SESSION["userID"]) continue; // Print other users email and link to their stats page ?>
       <div id="User<?php echo $key ?>" class="setGameResults <?php if ($c == 0) {echo "current"; $c++;} ?>">
         <p>Email: <?php echo $user['email'] ?></p>
         <a href="./viewUser.php?userID=<?php echo $user['user_id'] ?>">View</a>
@@ -21,20 +21,21 @@
   $editContent = [];
 ?>
   <?php foreach ($teams as $key => $team) {
+    // Print all teams
     $editContent[$team["team_id"]] = [];
     $members = getMembers($team['team_id']);
     $games = getTeamGames($team["team_id"]);
     $total = [];
   ?>
     <div id="<?php echo $team['name'] ?>" class="showTeamInfo">
-      <?php if($members || $potentialMembers) { ?>
+      <?php if($members || $potentialMembers) { // Display only if usefull ?>
       <div>
         <table class="members">
           <caption><b>Members</b></caption>
           <form action="../assets/team.php" method="post">
             <input type="hidden" name="team" value="<?php echo $team["team_id"] ?>">
           <?php
-            foreach ($members as $key => $member) {
+            foreach ($members as $key => $member) { // Print current members
           ?>
           <tr>
             <td><input min="1" type="checkbox" name="player[<?php echo $key ?>]" id="player<?php echo $member['user_id'] ?>" value="<?php echo $member['user_id'] ?>"></td>
@@ -45,7 +46,7 @@
             <td <?php if(!$potentialMembers) echo "colspan=\"3\""; ?>><input type="submit" name="removeMembers" value="Delete"></td>
             </form>
           <?php
-          if ($potentialMembers) {
+          if ($potentialMembers) { // Display only if usefull
           ?>
             <form action="../assets/team.php" method="post">
               <input type="hidden" name="team_id" value="<?php echo $team['team_id']; ?>">
@@ -62,7 +63,7 @@
 
       <?php
         }
-        if($members) {
+        if($members) { // Display only if usefull // Create new game results with current members
           $gameID = getNextGameIDForTeam($team['team_id']);
       ?>
       <div id="<?php echo $team['name'] ?>NewGame" class="setGameResults current">
@@ -95,8 +96,8 @@
       </div>
       <?php
         }
-        if($games) {
-          foreach ($games as $key => $game) {
+        if($games) { // Display only if usefull
+          foreach ($games as $key => $game) { // Print edit page per game
             $contribs = getTeamGameContributions($game["game_id"],$team["team_id"]);
       ?>
       <div id="<?php echo $team['name'].$game["game_id"] ?>" class="setGameResults">
@@ -134,7 +135,7 @@
         </table>
         </form>
       </div>
-      <?php } if ($total) { ?>
+      <?php } if ($total) { // Display only if usefull // Total results of the team ?>
       <div id="<?php echo $team['name'] ?>Total" class="setGameResults total <?php if(!$members) echo "current" ?>">
         <form action="../assets/team.php" method="post">
         <table>
@@ -166,13 +167,13 @@
 
       <div class="games">
         <h3>Game List</h3>
-          <?php if ($members) { ?>
+          <?php if ($members) { // Display only if usefull ?>
             <h4 id="h4<?php echo $team['name'] ?>NewGame" class="setGameResults current" <?php if(!$games) { ?>style="border-bottom: 2px solid cornsilk;"<?php } ?> onclick="showGame('#<?php echo $team['name'] ?>','#<?php echo $team['name'] ?>NewGame','#h4<?php echo $team['name'] ?>NewGame');">New</h4>
-          <?php } if ($games) { ?>
+          <?php } if ($games) { // Display only if usefull ?>
             <h4 id="h4<?php echo $team['name'] ?>Total" class="setGameResults <?php if(!$members) { ?>current<?php } ?>" style="border-bottom: 2px solid cornsilk;" onclick="showGame('#<?php echo $team['name'] ?>','#<?php echo $team['name'] ?>Total','#h4<?php echo $team['name'] ?>Total');">Total</h4>
           <?php
             }
-            foreach ($games as $key => $game) {
+            foreach ($games as $key => $game) { // List all games of the team
           ?>
           <h4 id="h4<?php echo $team['name'].$game["game_id"] ?>" class="setGameResults <?php if($key == 1 && !$total && !$games) echo "current" ?>" onclick="showGame('#<?php echo $team['name'] ?>','#<?php echo $team['name'].$game['game_id'] ?>','#h4<?php echo $team['name'].$game['game_id'] ?>');"><?php echo $game["game_id"] ?></h4>
           <?php
@@ -180,7 +181,7 @@
           ?>
       </div>
     </div>
-  <?php } ?>
+  <?php } // Create team ?>
   <div id="create" class="showTeamInfo">
     <form action="../assets/team.php" method="post">
       <label for="name">Naam: </label>
@@ -194,10 +195,10 @@
     <h4 id="h4create" style="border-bottom: 2px solid cornsilk;" class="showTeamInfo" onclick="showTeam('#create','#h4create')">Create Team</h4>
     <section id="createdTeams">
       <input placeholder="Team filter" onchange="teamSearch()" type="search" name="q" id="teamSearch">
-    <?php foreach ($teams as $key => $team) { 
+    <?php foreach ($teams as $key => $team) { // List all teams
       $members = getMembers($team['team_id']);
       $games = getTeamGames($team["team_id"]);
-      if ($members || $potentialMembers || $games) {
+      if ($members || $potentialMembers || $games) { // Display only if usefull
     ?>
       <h4 id="h4<?php echo $team['name'] ?>" class="showTeamInfo" onclick="showTeam('#<?php echo $team['name'] ?>','#h4<?php echo $team['name'] ?>');"><?php echo str_replace("_"," ",$team['name']) ?></h4>
     <?php } } ?>
@@ -207,18 +208,21 @@
 
 <script type="text/javascript">
   function showTeam(team,h4) {
+    // To switch between team information
     $('h4.showTeamInfo.current').removeClass('current');
     $('div.showTeamInfo.current').removeClass('current');
     $(h4).addClass('current');
     $(team).addClass('current');
   }
   function showGame(team,game,h4) {
+    // To switch between game information
     $(team).find('h4.setGameResults.current').removeClass('current');
     $(team).find('div.setGameResults.current').removeClass('current');
     $(h4).addClass('current');
     $(game).addClass('current');
   }
   function userSearch() {
+    // Filter users
     let search = $('#userSearch').val().toLowerCase();
     var userList = $('#Users').find('.games').find('h4');
     if (search == "") {
@@ -237,8 +241,10 @@
     });
   }
   function teamSearch() {
+    // Filter teams
     let search = $('#teamSearch').val().toLowerCase();
     var userList = $('#createdTeams').find('h4');
+    // Called userList because copy-paste
     if (search == "") {
       userList.each(function() {
         $(this).css('display','block');

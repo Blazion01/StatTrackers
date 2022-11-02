@@ -1,12 +1,15 @@
 <?php if(!isset($_SESSION)) session_start(); require_once "pdo.php";
   if(!isset($_SESSION['messages'])) $_SESSION['messages'] = [];
 
+// Get all teams in ascending order
 function getTeams() {
   $pdo = $GLOBALS["pdo"];
   $sql = "SELECT * FROM `team` ORDER BY `team_id` ASC";
   return $pdo->query($sql)->fetchAll(PDO::FETCH_ASSOC);
 }
 
+// Create new team
+// The auto increment is to catch duplicate teamnames and not skip an id position.
 function createTeam(string $name) {
   $pdo = $GLOBALS["pdo"];
   try {
@@ -24,18 +27,21 @@ function createTeam(string $name) {
   return;
 }
 
+// Get all current members of a team
 function getMembers(int $team) {
   $pdo = $GLOBALS["pdo"];
   $sql = "SELECT `user`.`name`,`user`.`user_id` FROM `user` WHERE `user`.`user_id` IN (SELECT `mtm_user_team`.`user_id` FROM `mtm_user_team` WHERE `mtm_user_team`.`team_id` = $team AND `mtm_user_team`.`active` = true);";
   return $pdo->query($sql)->fetchAll(PDO::FETCH_ASSOC);
 }
 
+// Get all users that are not in a team
 function getPotentialMembers() {
   $pdo = $GLOBALS["pdo"];
   $sql = "SELECT `user`.`user_id`,`user`.`name` FROM `user` WHERE `user`.`user_id` NOT IN (SELECT DISTINCT `mtm_user_team`.`user_id` FROM `mtm_user_team` WHERE `mtm_user_team`.`active` = true);";
   return $pdo->query($sql)->fetchAll(PDO::FETCH_ASSOC);
 }
 
+// Add a member to a team
 function addMember(int $team, int $user) {
   $pdo = $GLOBALS["pdo"];
   $sql = "INSERT INTO `mtm_user_team` (`user_id`, `team_id`)
@@ -47,6 +53,7 @@ function addMember(int $team, int $user) {
   return;
 }
 
+// Remove a member from a team
 function removeMember(int $team, int $user) {
   $pdo = $GLOBALS["pdo"];
   $sql = "UPDATE `mtm_user_team`
@@ -58,6 +65,7 @@ function removeMember(int $team, int $user) {
   return;
 }
 
+// This is to create a new game for a team
 function getNextGameIDForTeam(int $team) {
   $pdo = $GLOBALS["pdo"];
   $sql = "SELECT MAX(`game_id`)+1 AS 'game' FROM `goals` WHERE `team_id` = $team;";
@@ -66,6 +74,7 @@ function getNextGameIDForTeam(int $team) {
   return $result;
 }
 
+// This is used during creation and editing of game results
 function setGameResults(int $game, int $team, array $players) {
   $pdo = $GLOBALS["pdo"];
 
@@ -83,24 +92,28 @@ function setGameResults(int $game, int $team, array $players) {
   return;
 }
 
+// This is to get the members name
 function getMember(int $member) {
   $pdo = $GLOBALS["pdo"];
   $sql = "SELECT `name` FROM `user` WHERE `user_id` = $member;";
   return $pdo->query($sql)->fetch(PDO::FETCH_ASSOC);
 }
 
+// Get all the games of a team
 function getTeamGames(int $team) {
   $pdo = $GLOBALS["pdo"];
   $sql = "SELECT DISTINCT `game_id` FROM `goals` WHERE `team_id` = $team;";
   return $pdo->query($sql)->fetchAll(PDO::FETCH_ASSOC);
 }
 
+// Get the results of a specific game
 function getTeamGameContributions(int $game, int $team) {
   $pdo = $GLOBALS["pdo"];
   $sql = "SELECT `user_id`,`goal_amount`,`assists` FROM `goals` WHERE `game_id` = $game AND `team_id` = $team;";
   return $pdo->query($sql)->fetchAll(PDO::FETCH_ASSOC);
 }
 
+// These are function calls after a form has been posted
 if (isset($_POST["createTeam"])) {
   createTeam($_POST["name"]);
   ?> <script>location.href='../pages/admin.php'</script> <?php

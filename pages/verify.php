@@ -1,4 +1,7 @@
 <?php require_once "../assets/user.php";
+// reCaptcha v3 attempt
+// Doesn't work because the result can't be read
+// This is because resultcookie policy doesn't work in chrome
 $privatekey = "6LcoDHkiAAAAAHHWncTrt7JUQBPOw1oNbrxpkl7t";
 // $resp = recaptcha_check_answer($privatekey,$_SERVER["REMOTE_ADDR"],$_POST["recaptcha_challenge_field"],$_POST["recaptcha_response_field"]);
 $resp = true;
@@ -10,6 +13,7 @@ if (!$resp/* ->is_valid */) {?>
   return;
 }
 
+// Login form check
 if (isset($_POST["login"])) {
   if (!isset($_SESSION["user"])) {
     $result = getUser($_POST["email"]);
@@ -27,6 +31,7 @@ if (isset($_POST["login"])) {
   }
 }
 
+// Edit form check
 if (isset($_POST["registreer"])) {
   $messages = $GLOBALS["messages"];
   if ($_POST["password"] == $_POST["password2"]) {
@@ -37,6 +42,7 @@ if (isset($_POST["registreer"])) {
   }
 }
 
+// Fill session data after succesfull login
 if (isset($GLOBALS["user"]) && !isset($_SESSION["user"])) {
   $_SESSION["token"] = bin2hex(random_bytes(24));
   $_SESSION["user"] = $GLOBALS["user"];

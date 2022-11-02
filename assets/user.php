@@ -1,16 +1,22 @@
 <?php if(!isset($_SESSION)) session_start(); require_once "pdo.php"; require_once "../recaptcha-php-1.11/recaptchalib.php";
   if(!isset($_SESSION['messages'])) $_SESSION['messages'] = [];
 
+// This is to get the users json
+// In this case to determine their roles: user, admin, owner, dev
+// The order is from least to most privileges
 function getUserJson(string $user) {
   return json_decode(getUser($user)["json"],true);
 }
 
+// Get all users
+// Used in admin page
 function getAllUsers() {
   $pdo = $GLOBALS["pdo"];
   $sql = "SELECT `user_id`,`name`,`email` FROM `user`";
   return $pdo->query($sql)->fetchAll(PDO::FETCH_ASSOC);
 }
 
+// This is currently unused but could be used to add a role to a user
 function addRole(string $user, string $role) {
   $pdo = $GLOBALS["pdo"];
   $messages = $GLOBALS["messages"];
@@ -29,6 +35,7 @@ function addRole(string $user, string $role) {
   return;
 }
 
+// This is currently unused but could be used to remove a role from a user
 function removeRole(string $user, string $role) {
   $pdo = $GLOBALS["pdo"];
   $messages = $GLOBALS["messages"];
@@ -51,6 +58,7 @@ function removeRole(string $user, string $role) {
   return $messages;
 }
 
+// Used to create users
 function createUser(string $mail, string $name, string $pass) {
   $pdo = $GLOBALS["pdo"];
   $messages = $GLOBALS["messages"];
@@ -70,6 +78,7 @@ function createUser(string $mail, string $name, string $pass) {
   return;
 }
 
+// Get the users current team
 function getCurrentTeam(int $user)
 {
   $pdo = $GLOBALS["pdo"];
@@ -77,18 +86,21 @@ function getCurrentTeam(int $user)
   return $pdo->query($sql)->fetch(PDO::FETCH_ASSOC);
 }
 
+// Get the teammates of the current team
 function getTeamMembers(int $team, int $user) {
   $pdo = $GLOBALS["pdo"];
   $sql = "SELECT `user`.`name` FROM `user` WHERE `user`.`user_id` IN (SELECT `mtm_user_team`.`user_id` FROM `mtm_user_team` WHERE `mtm_user_team`.`team_id` = $team AND `mtm_user_team`.`active` = true) AND `user`.`user_id` != $user;";
   return $pdo->query($sql)->fetchAll(PDO::FETCH_ASSOC);
 }
 
+// Get the users team contributions
 function getTeamContributions(int $team, int $user) {
   $pdo = $GLOBALS["pdo"];
   $sql = "SELECT `game_id`,`goal_amount`,`assists` FROM `goals` WHERE `team_id` = $team AND `user_id` = $user;";
   return $pdo->query($sql)->fetchAll(PDO::FETCH_ASSOC);
 }
 
+// Get all teams where the users is tied to a game
 function getContributedTeams($team, int $user) {
   $pdo = $GLOBALS["pdo"];
   $sql = "SELECT `team`.* FROM `team` WHERE `team`.`team_id` IN (SELECT DISTINCT `goals`.`team_id` FROM `goals` WHERE ";
@@ -97,6 +109,7 @@ function getContributedTeams($team, int $user) {
   return $pdo->query($sql)->fetchAll(PDO::FETCH_ASSOC);
 }
 
+// Used to edit the users email and name
 if (isset($_POST["bewerk"])) {
   try {
     $sql = $pdo->prepare("UPDATE `user` SET `email`=:1, `name`=:2 WHERE `user_id`=:3;");

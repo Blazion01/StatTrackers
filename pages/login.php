@@ -1,5 +1,5 @@
 <?php include_once "./header.php";
-  require_once "../assets/user.php";
+  require_once "../assets/user.php"; // Login with email and password
 if (isset($_SESSION["user"])) { ?> <script>location.href="./home.php"</script> <?php }
 ?>
 

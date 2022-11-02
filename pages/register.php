@@ -1,4 +1,4 @@
-<?php include_once "./header.php";
+<?php include_once "./header.php"; // To register a new user
   require_once "../assets/user.php"; ?>
 
 <form action="./verify.php" method="post">

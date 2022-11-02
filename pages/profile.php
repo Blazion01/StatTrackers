@@ -1,4 +1,4 @@
-<?php include_once "./header.php";
+<?php include_once "./header.php"; // To edit your email and username
   require_once "../assets/user.php"; ?>
 
 <button onclick="bewerkProfiel()">Bewerk</button>
@@ -19,12 +19,14 @@ function bewerkProfiel() {
       $("#email").attr('disabled', true);
       $("#bewerk").attr('disabled', true);
       sw = 0;
+      // ^ Disable edit
       break;
     default:
       $("#name").attr('disabled', false);
       $("#email").attr('disabled', false);
       $("#bewerk").attr('disabled', false);
       sw = 1;
+      // ^ Enable edit
       break;
   }
 }

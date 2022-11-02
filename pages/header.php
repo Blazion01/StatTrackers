@@ -15,6 +15,7 @@
   include_once "./nav.php";
   $_SESSION['messages'] = [];
   if(isset($_SESSION['messages'])) foreach ($_SESSION['messages'] as $key => $message) {
+    // To give feedback if something happens
     array_shift($_SESSION['messages']);
 ?>
     <div onclick="hide('#message<?php echo $key ?>')" id="message<?php echo $key ?>" class="message <?php echo $message["type"] ?>">

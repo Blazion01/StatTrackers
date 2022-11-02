@@ -1,7 +1,9 @@
 <?php include_once "./header.php";
 require_once "../assets/user.php";
-require_once "../assets/team.php"; ?>
-<?php $contrib = false; //print_r($contrib); ?>
+require_once "../assets/team.php";
+$contrib = false; 
+// The same as stats page but for the admins to see other users stats
+?>
 
 <div id="stats">
 <?php
